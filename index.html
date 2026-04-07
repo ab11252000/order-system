@@ -59,6 +59,13 @@
     }
     .line-login-btn:hover { background: #009c00; transform: translateY(-2px); box-shadow: 0 10px 28px rgba(0,185,0,0.35); }
     .line-login-btn svg { width: 26px; height: 26px; flex-shrink: 0; }
+    .preview-btn {
+      display: block; width: 100%; margin-top: 14px; padding: 12px 0;
+      background: transparent; border: 1px dashed rgba(255,255,255,0.25);
+      border-radius: 10px; color: #64748b; font-size: 13px;
+      cursor: pointer; transition: all 0.2s; letter-spacing: 0.5px;
+    }
+    .preview-btn:hover { border-color: rgba(255,255,255,0.5); color: #94a3b8; background: rgba(255,255,255,0.05); }
 
     /* ── Header ── */
     header {
@@ -507,22 +514,6 @@
 
     .no-orders { text-align: center; padding: 60px 20px; color: #475569; font-size: 15px; }
 
-    /* ── Preview Button ── */
-    .preview-btn {
-      display: block; width: 100%; padding: 13px;
-      background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.18);
-      border-radius: 12px; color: #94a3b8; font-size: 14px; font-weight: 600;
-      cursor: pointer; transition: all 0.2s; font-family: inherit; margin-top: 12px;
-    }
-    .preview-btn:hover { background: rgba(255,255,255,0.14); color: #e2e8f0; }
-
-    /* ── Demo Bar ── */
-    .demo-bar {
-      display: none; position: fixed; bottom: 0; left: 0; right: 0; z-index: 9999;
-      background: #f59e0b; color: #1c1917;
-      font-size: 13px; font-weight: 700; text-align: center; padding: 9px 16px;
-    }
-    .demo-bar.on { display: block; }
 
     /* ── Responsive ── */
 
@@ -657,10 +648,7 @@
       </svg>
       使用 LINE 登入
     </button>
-    <div style="margin-top:18px; padding-top:16px; border-top:1px solid rgba(255,255,255,0.1);">
-      <button class="preview-btn" onclick="startDemoMode()">🖥 本機預覽模式（測試用）</button>
-      <p style="font-size:11px; color:#475569; margin-top:8px;">不需 LINE 或 Firebase，資料暫存在瀏覽器</p>
-    </div>
+    <button class="preview-btn" onclick="localPreview()">本機預覽（測試用）</button>
   </div>
 </div>
 
@@ -937,72 +925,19 @@ const CONFIG = {
 
 
   firebase: {
-    apiKey:            'YOUR_API_KEY',
-    authDomain:        'YOUR_PROJECT_ID.firebaseapp.com',
-    projectId:         'YOUR_PROJECT_ID',
-    storageBucket:     'YOUR_PROJECT_ID.appspot.com',
-    messagingSenderId: 'YOUR_SENDER_ID',
-    appId:             'YOUR_APP_ID'
+    apiKey:            'AIzaSyDOl7Kq_mZZPdCPkSb_oRPBlxh37sZG5ls',
+    authDomain:        'xiangyue-order.firebaseapp.com',
+    projectId:         'xiangyue-order',
+    storageBucket:     'xiangyue-order.firebasestorage.app',
+    messagingSenderId: '89673554795',
+    appId:             '1:89673554795:web:e101e39be2d99349a84a2e'
   }
 };
-
-// ─────────────────────────────────────────────
-// LocalDB Mock（本機預覽模式用，以 localStorage 模擬 Firestore）
-// ─────────────────────────────────────────────
-const localDB = (() => {
-  const PFX = '_ldb_';
-  function load(col) {
-    try { return JSON.parse(localStorage.getItem(PFX + col) || '[]'); } catch(e) { return []; }
-  }
-  function save(col, arr) { localStorage.setItem(PFX + col, JSON.stringify(arr)); }
-  function wrapDoc(raw) {
-    const { __id, ...data } = raw;
-    if (typeof data.createdAt === 'number') {
-      const ts = data.createdAt;
-      data.createdAt = { toDate: () => new Date(ts), toMillis: () => ts };
-    }
-    return { id: __id, data: () => data, exists: true };
-  }
-  function makeDocRef(col, id) {
-    return {
-      async get() {
-        const r = load(col).find(x => x.__id === id);
-        return r ? wrapDoc({ ...r }) : { exists: false, data: () => ({}) };
-      },
-      async set(data)   { const a = load(col); const i = a.findIndex(x=>x.__id===id); const d={...data,__id:id}; if(i>=0)a[i]=d;else a.push(d); save(col,a); },
-      async update(data){ const a = load(col); const i = a.findIndex(x=>x.__id===id); if(i>=0){ Object.assign(a[i],data); save(col,a); } },
-      async delete()    { save(col, load(col).filter(x=>x.__id!==id)); }
-    };
-  }
-  function makeQuery(col) {
-    let filters=[], sortF=null, sortD='asc', limitN=Infinity;
-    const q = {
-      where(f,op,v)  { filters.push({f,op,v}); return q; },
-      orderBy(f,d)   { sortF=f; sortD=d||'asc'; return q; },
-      limit(n)       { limitN=n; return q; },
-      async get() {
-        let a = load(col);
-        for (const {f,op,v} of filters) if(op==='==') a=a.filter(x=>x[f]===v);
-        if (sortF) a.sort((x,y)=>{const xv=x[sortF]??0,yv=y[sortF]??0; return sortD==='desc'?(yv>xv?1:yv<xv?-1:0):(xv>yv?1:xv<yv?-1:0);});
-        if (isFinite(limitN)) a=a.slice(0,limitN);
-        return { docs: a.map(r=>wrapDoc({...r})) };
-      },
-      async add(data) {
-        const a=load(col), id='demo_'+Date.now()+'_'+Math.random().toString(36).slice(2,5);
-        a.push({...data, __id:id, createdAt:Date.now()}); save(col,a); return {id};
-      },
-      doc(id) { return makeDocRef(col,id); }
-    };
-    return q;
-  }
-  return { collection: col => makeQuery(col) };
-})();
 
 // ─────────────────────────────────────────────
 // App State
 // ─────────────────────────────────────────────
 let db           = null;
-let DEMO_MODE    = false;
 let currentUser  = null;
 let myStores     = [];
 let allOrders    = [];
@@ -1061,17 +996,6 @@ window.addEventListener('load', async () => {
 });
 
 // ─────────────────────────────────────────────
-// Demo Mode
-// ─────────────────────────────────────────────
-function startDemoMode() {
-  DEMO_MODE   = true;
-  db          = localDB;
-  currentUser = { userId: 'demo_user_001', displayName: '我的帳號（預覽）', pictureUrl: '' };
-  document.getElementById('demoBanner').classList.add('on');
-  onLoggedIn();
-}
-
-// ─────────────────────────────────────────────
 // 隱藏後台入口：連點 Logo 5 下
 // ─────────────────────────────────────────────
 let _logoTaps = 0, _logoTimer = null;
@@ -1098,7 +1022,7 @@ async function onLoggedIn() {
     const userRef = db.collection('users').doc(currentUser.userId);
     const userDoc = await userRef.get();
     if (!userDoc.exists) {
-      const ts = DEMO_MODE ? Date.now() : firebase.firestore.FieldValue.serverTimestamp();
+      const ts = firebase.firestore.FieldValue.serverTimestamp();
       await userRef.set({
         userId:      currentUser.userId,
         displayName: currentUser.displayName || '',
@@ -1126,6 +1050,18 @@ async function onLoggedIn() {
 function lineLogin() {
   try { liff.login(); }
   catch(e) { alert('LINE 登入失敗：請確認 LIFF ID 已設定並部署到 HTTPS 網址。'); }
+}
+
+function localPreview() {
+  currentUser = {
+    userId:      'preview_user',
+    displayName: '本機預覽',
+    pictureUrl:  ''
+  };
+  if (!db && CONFIG.firebase.apiKey !== 'YOUR_API_KEY') {
+    try { firebase.initializeApp(CONFIG.firebase); db = firebase.firestore(); } catch(e) {}
+  }
+  onLoggedIn();
 }
 
 function doLogout() {
@@ -1425,7 +1361,7 @@ async function executeBlock() {
     if (userDoc.exists) {
       await userRef.update({ status: 'blocked' });
     } else {
-      const ts = DEMO_MODE ? Date.now() : firebase.firestore.FieldValue.serverTimestamp();
+      const ts = firebase.firestore.FieldValue.serverTimestamp();
       await userRef.set({ userId, displayName: userName || '', status: 'blocked', createdAt: ts });
     }
     // 刪除此人的所有店面
@@ -1964,8 +1900,5 @@ function fmtTime(d) {
   </div>
 </div>
 
-<div class="demo-bar" id="demoBanner">
-  ⚠️ 本機預覽模式 — 資料僅存在此瀏覽器，正式上線後請設定 LINE 登入及 Firebase
-</div>
 </body>
 </html>
