@@ -338,7 +338,7 @@ body {
     align-items: center;
     gap: 2px;
     z-index: 1;
-    opacity: 1;
+    animation: heroFadeUp 1s ease 1.3s both;
 }
 .scroll-label {
     font-size: 0.68rem;
@@ -349,15 +349,16 @@ body {
 }
 .scroll-chevron {
     display: block;
-    color: #c9a84c;
-    font-size: 0.75rem;
-    line-height: 0.9;
-    transform: rotate(90deg);
+    width: 13px;
+    height: 13px;
+    border-right: 2px solid #c9a84c;
+    border-bottom: 2px solid #c9a84c;
+    transform: rotate(45deg);
     animation: chevronDrop 1.7s ease-in-out infinite;
 }
 .scroll-chevron:nth-child(3) {
     animation-delay: 0.22s;
-    opacity: 0.45;
+    opacity: 0.5;
 }
 
 /* ===== PAGE HERO (other product pages) ===== */
