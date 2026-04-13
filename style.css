@@ -32,20 +32,56 @@ body {
     z-index: 1000;
     box-shadow: 0 2px 24px rgba(0,0,0,0.07);
 }
-.logo-area { display: flex; flex-direction: column; text-decoration: none; }
-.logo-main {
-    font-family: 'Noto Serif TC', serif;
-    font-size: 1.8rem;
-    font-weight: 700;
-    color: #0d0d1e;
-    letter-spacing: 4px;
+/* SEO 隱藏文字：移出螢幕但保留搜尋引擎索引 */
+.logo-seo-text {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
 }
-.logo-main span { color: #c9a84c; }
-.logo-sub {
-    font-size: 0.66rem;
-    color: #aaa;
-    letter-spacing: 2.5px;
-    margin-top: 3px;
+
+.logo-area {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+}
+
+.logo-emblem svg {
+    display: block;
+    transition: transform 0.4s ease;
+}
+.logo-area:hover .logo-emblem svg {
+    transform: rotate(12deg);
+}
+
+.logo-brand-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.logo-brand-zh {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 1.7rem;
+    font-weight: 600;
+    color: #B55A2A;
+    letter-spacing: 6px;
+    line-height: 1;
+}
+
+.logo-brand-en {
+    font-size: 0.59rem;
+    color: #B55A2A;
+    letter-spacing: 3.5px;
+    margin-top: 6px;
+    opacity: 0.75;
+    font-family: 'Noto Sans TC', sans-serif;
+    font-weight: 400;
 }
 
 /* ===== NAVIGATION ===== */
@@ -793,8 +829,9 @@ body {
 
 @media (max-width: 540px) {
     .top-bar { font-size: 0.66rem; letter-spacing: 1.5px; padding: 7px 12px; }
-    .logo-main { font-size: 1.45rem; letter-spacing: 3px; }
-    .logo-sub { font-size: 0.58rem; letter-spacing: 1.5px; }
+    .logo-brand-zh { font-size: 1.3rem; letter-spacing: 4px; }
+    .logo-brand-en { font-size: 0.52rem; letter-spacing: 2.5px; }
+    .logo-emblem svg { width: 50px; height: 50px; }
     .page-hero { padding: 54px 20px 46px; }
     .section-wrap { padding: 52px 16px; }
     .products-grid, .materials-grid { grid-template-columns: 1fr; }
