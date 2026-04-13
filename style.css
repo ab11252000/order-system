@@ -158,11 +158,10 @@ body {
     from { opacity: 0; transform: translateY(26px); }
     to   { opacity: 1; transform: translateY(0); }
 }
-@keyframes scrollPulse {
-    0%   { opacity: 0; transform: scaleY(0); transform-origin: top; }
-    40%  { opacity: 1; transform: scaleY(1); transform-origin: top; }
-    78%  { opacity: 0.3; transform: scaleY(1); transform-origin: bottom; }
-    100% { opacity: 0; transform: scaleY(0); transform-origin: bottom; }
+@keyframes chevronDrop {
+    0%   { opacity: 0.15; transform: rotate(45deg) translateY(0); }
+    50%  { opacity: 1;    transform: rotate(45deg) translateY(5px); }
+    100% { opacity: 0.15; transform: rotate(45deg) translateY(0); }
 }
 
 .hero-eyebrow {
@@ -193,10 +192,11 @@ body {
     margin-bottom: 4px;
 }
 .brand-zh {
-    font-family: 'Ma Shan Zheng', 'Noto Serif TC', serif;
-    font-size: 1.7rem;
+    font-family: 'Noto Serif TC', serif;
+    font-weight: 300;
+    font-size: 1.9rem;
     color: rgba(255,255,255,0.78);
-    letter-spacing: 6px;
+    letter-spacing: 7px;
     line-height: 1;
     text-shadow: 0 0 20px rgba(201,168,76,0.2);
 }
@@ -330,27 +330,34 @@ body {
 /* Scroll hint */
 .hero-scroll {
     position: absolute;
-    bottom: 30px;
+    bottom: 36px;
     left: 50%;
     transform: translateX(-50%);
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 9px;
+    gap: 2px;
     z-index: 1;
-    animation: heroFadeUp 1s ease 1.3s both;
+    opacity: 1;
 }
 .scroll-label {
-    font-size: 0.53rem;
-    letter-spacing: 4px;
+    font-size: 0.68rem;
+    letter-spacing: 3px;
     color: rgba(255,255,255,0.18);
+    margin-bottom: 9px;
+    font-family: 'Noto Sans TC', sans-serif;
 }
-.scroll-bar {
+.scroll-chevron {
     display: block;
-    width: 1px;
-    height: 44px;
-    background: linear-gradient(to bottom, rgba(201,168,76,0.55), transparent);
-    animation: scrollPulse 2.2s ease-in-out infinite;
+    color: #c9a84c;
+    font-size: 0.75rem;
+    line-height: 0.9;
+    transform: rotate(90deg);
+    animation: chevronDrop 1.7s ease-in-out infinite;
+}
+.scroll-chevron:nth-child(3) {
+    animation-delay: 0.22s;
+    opacity: 0.45;
 }
 
 /* ===== PAGE HERO (other product pages) ===== */
