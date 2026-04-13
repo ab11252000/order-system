@@ -202,5 +202,7 @@
 @media (max-width: 480px) {
     .cat-grid { grid-template-columns: 1fr; }
     .cat-card { padding: 38px 22px 32px; }
-    .feature-item { min-width: 120px; padding: 18px 14px; }
+    .feature-item { flex: 0 0 50%; min-width: 0; padding: 20px 14px; border-right: none; border-bottom: 1px solid rgba(201,168,76,0.12); }
+    .feature-item:nth-child(odd) { border-right: 1px solid rgba(201,168,76,0.12); }
+    .feature-item:nth-last-child(-n+2) { border-bottom: none; }
 }
