@@ -554,6 +554,9 @@
     flex-direction: column;
     align-items: center;
     padding: 28px 40px 32px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 0.28s;
     background: linear-gradient(180deg,
         #EDE5CF 0%,
         #F2EBE0 40%,
@@ -1698,33 +1701,10 @@
 }
 .bulletin-cta:hover { color: #B55A2A; border-color: #B55A2A; }
 
-/* ── 點擊放大提示 ── */
+/* ── 點擊放大游標 ── */
 .showcase-slide {
     cursor: zoom-in;
     position: relative;
-}
-.sc-zoom-hint {
-    position: absolute;
-    bottom: 18px;
-    left: 50%;
-    transform: translateX(-50%) translateY(6px);
-    background: rgba(30,22,8,0.55);
-    color: rgba(220,195,130,0.90);
-    font-size: 0.64rem;
-    letter-spacing: 2.5px;
-    padding: 5px 14px;
-    border: 1px solid rgba(196,165,90,0.22);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    white-space: nowrap;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.28s, transform 0.28s;
-    z-index: 5;
-}
-.showcase-slide:hover .sc-zoom-hint {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
 }
 
 /* ════════════════════════════════════════
@@ -1913,8 +1893,10 @@
 }
 @media (max-width: 480px) {
     .showcase-left { height: 260px; }
-    .sc-counter { top: 14px; right: 14px; }
-    .sc-cur { font-size: 1.8rem; }
+    .sc-counter { top: 10px; right: 10px; padding: 5px 8px 4px 10px; }
+    .sc-cur     { font-size: 1.1rem; }
+    .sc-sep     { margin: 3px 0; }
+    .sc-total   { font-size: 0.58rem; letter-spacing: 1px; }
     .ticker-track span { font-size: 0.72rem; padding: 0 36px; }
 }
 
@@ -2254,9 +2236,10 @@
     .showcase-left  { height: 270px; }
 
     /* 頁碼縮小 */
-    .sc-counter { top: 12px; right: 12px; padding: 6px 10px 5px 12px; }
-    .sc-cur     { font-size: 1.7rem; }
-    .sc-total   { font-size: 0.65rem; }
+    .sc-counter { top: 10px; right: 10px; padding: 4px 8px 3px 10px; }
+    .sc-cur     { font-size: 1.0rem; }
+    .sc-sep     { margin: 2px 0; }
+    .sc-total   { font-size: 0.55rem; letter-spacing: 1px; }
 
     /* 布告欄  */
     .bulletin-title { font-size: 0.82rem; letter-spacing: 2px; }

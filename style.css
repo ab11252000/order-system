@@ -137,6 +137,7 @@ body {
     padding: 10px 14px;
     color: #3A3025;
     text-decoration: none;
+    font-family: 'Noto Serif TC', serif;
     font-size: 0.82rem;
     font-weight: 500;
     letter-spacing: 0.5px;
@@ -164,6 +165,7 @@ body {
     padding: 10px 20px;
     color: #5A5040;
     text-decoration: none;
+    font-family: 'Noto Serif TC', serif;
     font-size: 0.8rem;
     transition: background 0.2s, color 0.2s;
     border-bottom: 1px solid #F0EDE5;
