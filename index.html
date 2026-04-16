@@ -11,8 +11,6 @@
     <link rel="stylesheet" href="./index.css">
 </head>
 <body>
-<div class="top-bar">翔躍企業社 ｜ 工廠直營 · 專業換皮 · 高密度泡棉保固十年</div>
-
 <header class="header">
     <a href="./index.html" class="logo-area">
         <span class="logo-seo-text">翔躍企業社 XIANG YUE ENTERPRISE · TAIWAN</span>
@@ -39,7 +37,7 @@
         </div>
     </a>
     <ul class="menu">
-        <li class="menu1"><a href="./index.html">首頁</a></li>
+        <li class="menu1"><a href="./首頁.html">首頁</a></li>
         <li class="menu1">
             <a href="./腳底按摩椅.html">腳底按摩椅 &#x25BE;</a>
             <ul class="submenu">
@@ -62,6 +60,7 @@
                 <li><a href="./養生館材料及設備.html#設備">【設備】</a></li>
             </ul>
         </li>
+        <li class="menu1"><a href="./關於我們.html">關於我們</a></li>
         <li class="menu1"><a href="./聯絡我們.html">聯絡我們</a></li>
     </ul>
     <button class="menu-toggle" aria-label="開啟選單" aria-expanded="false">
@@ -70,7 +69,8 @@
 </header>
 
 <!-- ═══ SITE HERO ═══ -->
-<section class="site-hero">
+<section class="site-hero" id="siteHero">
+    <div class="hero-spotlight" id="heroSpotlight" aria-hidden="true"></div>
     <div class="hero-watermark" aria-hidden="true">躍</div>
     <div class="site-hero-content">
         <div class="hero-eyebrow">XIANG YUE ENTERPRISE &nbsp;·&nbsp; TAIWAN</div>
@@ -90,132 +90,69 @@
         <p class="hero-product-line">腳底按摩椅 &nbsp;·&nbsp; 指壓床 &nbsp;·&nbsp; 養生館材料設備</p>
         <p class="hero-brand-line">精工製造 &nbsp;·&nbsp; 工廠直營 &nbsp;·&nbsp; 專業換皮</p>
         <p class="hero-tagline">以二十載匠心技藝，成就每份舒適與信賴</p>
-        <div class="hero-cta-row">
-            <a href="#categories" class="btn-site-outline">查看產品分類</a>
-            <a href="./聯絡我們.html" class="btn-site-gold">立即聯絡</a>
-        </div>
+        <a href="./首頁.html" class="btn-enter-site">
+            <span>進 入 官 網</span>
+            <span class="enter-arrow"></span>
+        </a>
     </div>
-    <div class="hero-scroll" aria-hidden="true">
-        <span class="scroll-label">滑動瀏覽</span>
-        <span class="scroll-chevron"></span>
-        <span class="scroll-chevron"></span>
-    </div>
-</section>
 
-<!-- FEATURES STRIP -->
-<div class="features">
-    <div class="feature-item">
-        <span class="fi-icon">✦</span>
-        <h4>工廠直營</h4>
-        <p>省去中間商費用</p>
-    </div>
-    <div class="feature-item">
-        <span class="fi-icon">✦</span>
-        <h4>高密度泡棉</h4>
-        <p>保固十年耐用品質</p>
-    </div>
-    <div class="feature-item">
-        <span class="fi-icon">✦</span>
-        <h4>客製化服務</h4>
-        <p>依需求量身打造</p>
-    </div>
-    <div class="feature-item">
-        <span class="fi-icon">✦</span>
-        <h4>專業維修</h4>
-        <p>快速到位的服務</p>
-    </div>
-</div>
-
-<!-- ABOUT -->
-<section class="about-section">
-    <div class="section-wrap">
-        <div class="section-header">
-            <span class="section-tag">ABOUT US</span>
-            <h2 class="section-title">關 於 我 們</h2>
-            <div class="section-divider"></div>
+    <!-- FEATURES STRIP -->
+    <div class="features hero-features">
+        <div class="feature-item">
+            <span class="fi-icon">✦</span>
+            <h4>工廠直營</h4>
+            <p>省去中間商費用</p>
         </div>
-        <div class="about-grid">
-            <div class="about-text">
-                <h2>專業品質，顧客至上</h2>
-                <p>致力於為客戶提供最優質的產品和卓越的服務體驗。我們能根據您的需求量身定制個性化的解決方案，確保每一位客戶都能享受到最適合自己的產品。</p>
-                <p>我們的產品全部採用<strong>高密度泡棉</strong>，有極佳的耐用性和舒適性，能有效提升使用體驗。精湛的技藝和專業知識為我們的服務提供了堅實的保障。</p>
-                <p>我們堅持以客戶為中心，不斷追求卓越，致力於提升您的產品品質，期待與您合作，共同創造健康舒適的生活環境。</p>
-                <div class="why-box">
-                    <h3>Q：為什麼要跟我們購買？</h3>
-                    <ul>
-                        <li>工廠直營，提供最快速且完善的維修服務</li>
-                        <li>價格實惠，同時提供高品質的產品</li>
-                        <li>使用高密度泡棉，保證十年泡棉也不會壞</li>
-                        <li>全程獨立製作，可最大程度提供客製化服務</li>
-                    </ul>
-                </div>
-                <a href="./聯絡我們.html" class="cta-link">聯絡我們 →</a>
-            </div>
-            <div class="about-img-box">
-                <img src="./維修前後.png" alt="維修前後對比" onerror="this.style.display='none'">
-                <div class="img-caption">維修前後對比</div>
-            </div>
+        <div class="feature-item">
+            <span class="fi-icon">✦</span>
+            <h4>高密度泡棉</h4>
+            <p>耐用舒適品質卓越</p>
+        </div>
+        <div class="feature-item">
+            <span class="fi-icon">✦</span>
+            <h4>客製化服務</h4>
+            <p>依需求量身打造</p>
+        </div>
+        <div class="feature-item">
+            <span class="fi-icon">✦</span>
+            <h4>專業維修</h4>
+            <p>快速到位的服務</p>
         </div>
     </div>
 </section>
 
-<!-- PRODUCT CATEGORIES -->
-<section id="categories" class="cat-section">
-    <div class="section-wrap">
-        <div class="section-header">
-            <span class="section-tag">OUR PRODUCTS</span>
-            <h2 class="section-title">產 品 項 目</h2>
-            <div class="section-divider"></div>
-        </div>
-        <div class="cat-grid">
-            <a href="./腳底按摩椅.html" class="cat-card">
-                <div class="cat-card-inner">
-                    <span class="cat-en">FOOT MASSAGE CHAIR</span>
-                    <h3>腳底按摩椅</h3>
-                    <p>樣品展示 · 換皮維修</p>
-                    <span class="arrow">了解更多 →</span>
-                </div>
-            </a>
-            <a href="./指壓床.html" class="cat-card">
-                <div class="cat-card-inner">
-                    <span class="cat-en">MASSAGE BED</span>
-                    <h3>指壓床</h3>
-                    <p>樣品展示 · 換皮維修</p>
-                    <span class="arrow">了解更多 →</span>
-                </div>
-            </a>
-            <a href="./養生館材料及設備.html" class="cat-card">
-                <div class="cat-card-inner">
-                    <span class="cat-en">WELLNESS MATERIALS</span>
-                    <h3>養生館材料及設備</h3>
-                    <p>材料展示 · 設備展示</p>
-                    <span class="arrow">了解更多 →</span>
-                </div>
-            </a>
-        </div>
-    </div>
-</section>
-
-<!-- CTA -->
-<div class="cta-section">
-    <h2>需要訂製或維修服務？</h2>
-    <p>歡迎來電或留言，我們會儘快為您安排報價</p>
-    <a href="./聯絡我們.html" class="btn-gold">立即聯絡我們</a>
-</div>
-
-<footer class="footer">
-    <div class="footer-logo">翔 躍 企 業 社</div>
-    <div class="footer-en">XIANG YUE ENTERPRISE</div>
-    <div class="footer-divider"></div>
-    <p>腳底按摩椅 · 指壓床 · 養生館材料及設備 · 工廠直營</p>
-    <p class="footer-copy">&copy; 2024 翔躍企業社. 保留所有權利.</p>
-</footer>
 <script>
+/* ── Hero spotlight mouse tracking ── */
+(function(){
+    var hero = document.getElementById('siteHero');
+    var spot = document.getElementById('heroSpotlight');
+    if(!hero || !spot) return;
+    var cx = 50, cy = 42;
+    var tx = 50, ty = 42;
+    var raf;
+    function lerp(a, b, t){ return a + (b - a) * t; }
+    function tick(){
+        cx = lerp(cx, tx, 0.06);
+        cy = lerp(cy, ty, 0.06);
+        spot.style.setProperty('--mx', cx.toFixed(2) + '%');
+        spot.style.setProperty('--my', cy.toFixed(2) + '%');
+        raf = requestAnimationFrame(tick);
+    }
+    hero.addEventListener('mousemove', function(e){
+        var r = hero.getBoundingClientRect();
+        tx = ((e.clientX - r.left) / r.width  * 100).toFixed(2);
+        ty = ((e.clientY - r.top)  / r.height * 100).toFixed(2);
+    });
+    hero.addEventListener('mouseleave', function(){
+        tx = 50; ty = 42;
+    });
+    tick();
+})();
+
 (function(){
     var toggle = document.querySelector('.menu-toggle');
     var menu   = document.querySelector('.menu');
     if(!toggle || !menu) return;
-
     toggle.addEventListener('click', function(e){
         e.stopPropagation();
         var open = menu.classList.toggle('is-open');
@@ -223,8 +160,6 @@
         toggle.setAttribute('aria-expanded', open);
         toggle.setAttribute('aria-label', open ? '關閉選單' : '開啟選單');
     });
-
-    // 手機上點選有子選單的項目展開子選單
     document.querySelectorAll('.menu1 > a').forEach(function(a){
         a.addEventListener('click', function(e){
             if(window.innerWidth > 768) return;
@@ -234,8 +169,6 @@
             sub.classList.toggle('is-open');
         });
     });
-
-    // 點選選單外部關閉
     document.addEventListener('click', function(e){
         if(!e.target.closest('.header')){
             menu.classList.remove('is-open');
