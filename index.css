@@ -1622,18 +1622,11 @@
     list-style: none;
     margin: 0;
     padding: 0;
-    flex: 1;
-    overflow-y: auto;
+    overflow-y: visible;
     display: flex;
     flex-direction: column;
     gap: 0;
-    /* 淡出底部 */
-    mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
-    -webkit-mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
 }
-.bulletin-list::-webkit-scrollbar { width: 3px; }
-.bulletin-list::-webkit-scrollbar-track { background: transparent; }
-.bulletin-list::-webkit-scrollbar-thumb { background: rgba(168,134,58,0.25); border-radius: 2px; }
 
 .bulletin-item {
     padding: 11px 0;
@@ -2200,8 +2193,8 @@
     .bulletin-list {
         mask-image: none;
         -webkit-mask-image: none;
-        max-height: 280px;
-        overflow-y: auto;
+        max-height: none;
+        overflow-y: visible;
     }
     /* 觸控裝置：zoom hint 常態顯示 */
     .sc-zoom-hint {
@@ -2250,6 +2243,13 @@
 
 /* ── 480px：小手機 ── */
 @media (max-width: 480px) {
+    /* index hero 產品線文字防止換行 */
+    .hero-product-line,
+    .hero-brand-line {
+        font-size: 0.78rem !important;
+        letter-spacing: 1.5px !important;
+    }
+
     /* showcase 圖片區高度 */
     .showcase-left  { height: 270px; }
 
@@ -2284,6 +2284,11 @@
 
 /* ── 360px：超小手機 ── */
 @media (max-width: 360px) {
+    .hero-product-line,
+    .hero-brand-line {
+        font-size: 0.70rem !important;
+        letter-spacing: 1px !important;
+    }
     .showcase-left { height: 230px; }
     .bulletin-board { padding: 16px 14px 14px; }
     .bulletin-text  { font-size: 0.70rem; }
