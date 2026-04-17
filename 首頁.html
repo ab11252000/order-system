@@ -280,7 +280,7 @@
     else { render(DEFAULT); }
 
 
-    if(BIN_ID && BIN_ID !== '69e21bb636566621a8c2f4cb'){
+    if(BIN_ID){
         fetch('https://api.jsonbin.io/v3/b/' + BIN_ID + '/latest')
         .then(function(r){ return r.json(); })
         .then(function(data){
