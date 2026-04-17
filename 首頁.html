@@ -67,7 +67,6 @@
     </button>
 </header>
 
-<!-- ═══ 跑馬燈 TICKER ═══ -->
 <div class="ticker-bar">
     <div class="ticker-label">最新公告</div>
     <div class="ticker-outer">
@@ -84,9 +83,8 @@
     </div>
 </div>
 
-<!-- ═══ PRODUCT SHOWCASE ═══ -->
 <section class="showcase-section">
-    <!-- 左半：圖片輪播 -->
+
     <div class="showcase-left">
         <div class="showcase-slider" id="showcaseSlider">
             <div class="showcase-track" id="showcaseTrack">
@@ -107,7 +105,7 @@
                 </div>
             </div>
 
-            <!-- 左右箭頭 -->
+
             <button class="sc-arrow sc-arrow--prev" id="scPrev" aria-label="上一張">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                     <polyline points="15 18 9 12 15 6"/>
@@ -119,19 +117,19 @@
                 </svg>
             </button>
 
-            <!-- 頁碼角牌 -->
+
             <div class="sc-counter">
                 <span class="sc-cur" id="scCur">01</span>
                 <span class="sc-sep"></span>
                 <span class="sc-total" id="scTotal">04</span>
             </div>
 
-            <!-- 底部點 -->
+
             <div class="sc-dots" id="scDots"></div>
         </div>
     </div>
 
-    <!-- 右半：布告欄 -->
+
     <div class="showcase-right">
         <div class="bulletin-board">
             <div class="bulletin-header">
@@ -140,7 +138,7 @@
                 <span class="bulletin-en">NOTICE BOARD</span>
             </div>
             <ul class="bulletin-list" id="bulletinList">
-                <!-- 由後台管理系統動態載入 -->
+
             </ul>
             <div class="bulletin-footer">
                 <a href="./聯絡我們.html" class="bulletin-cta">聯絡我們 →</a>
@@ -149,7 +147,6 @@
     </div>
 </section>
 
-<!-- ═══ SCROLL INVITE ═══ -->
 <a class="scroll-invite" id="scrollInvite" href="#categories" aria-label="往下滑動查看產品目錄">
     <div class="si-top">
         <span class="si-rule"></span>
@@ -172,7 +169,6 @@
     </div>
 </a>
 
-<!-- PRODUCT CATEGORIES -->
 <section id="categories" class="cat-section">
     <div class="section-wrap">
         <div class="section-header">
@@ -214,7 +210,6 @@
     <p class="footer-copy">&copy; 2024 翔躍企業社. 保留所有權利.</p>
 </footer>
 
-<!-- ═══ LIGHTBOX ═══ -->
 <div class="lb-overlay" id="lbOverlay" aria-hidden="true">
     <div class="lb-backdrop" id="lbBackdrop"></div>
 
@@ -249,12 +244,12 @@
 </div>
 
 <script>
-/* ── 布告欄：從 JSONBin 雲端讀取資料 ── */
+
 (function(){
 
-    /* ▼▼▼ 設定完 JSONBin 後，把 YOUR_BIN_ID 換成你的 Bin ID ▼▼▼ */
+
     var BIN_ID = '69e216cd36566621a8c2dfeb';
-    /* ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲ */
+
 
     var DEFAULT = [
         { date: '2026-04-16', text: '歡迎光臨翔躍企業社',      isNew: true  },
@@ -279,13 +274,13 @@
         list.innerHTML = html;
     }
 
-    /* 先用快取立即顯示，避免閃爍 */
+
     var cached = localStorage.getItem('xy_bulletinCache');
     if(cached){ try{ render(JSON.parse(cached)); }catch(e){ render(DEFAULT); } }
     else { render(DEFAULT); }
 
-    /* 若 Bin ID 已設定，再從雲端拉最新資料 */
-    if(BIN_ID && BIN_ID !== 'YOUR_BIN_ID'){
+
+    if(BIN_ID && BIN_ID !== '69e21bb636566621a8c2f4cb'){
         fetch('https://api.jsonbin.io/v3/b/' + BIN_ID + '/latest')
         .then(function(r){ return r.json(); })
         .then(function(data){
@@ -296,7 +291,7 @@
             }
         })
         .catch(function(){
-            /* 網路失敗：保持快取顯示，靜默處理 */
+
         });
     }
 })();
@@ -335,7 +330,6 @@
     });
 })();
 
-/* ── Showcase Slider ── */
 (function(){
     var track  = document.getElementById('showcaseTrack');
     var slides = track ? track.querySelectorAll('.showcase-slide') : [];
@@ -351,10 +345,10 @@
     var current = 0;
     var autoTimer;
 
-    /* 總頁數 */
+
     if(totalEl) totalEl.textContent = String(total).padStart(2, '0');
 
-    /* 建立點點 */
+
     var dots = [];
     if(dotsWrap){
         for(var i = 0; i < total; i++){
@@ -382,7 +376,7 @@
     if(btnPrev) btnPrev.addEventListener('click', function(){ goTo(current - 1); resetAuto(); });
     if(btnNext) btnNext.addEventListener('click', function(){ goTo(current + 1); resetAuto(); });
 
-    /* 觸控滑動 */
+
     var startX = 0;
     track.addEventListener('touchstart', function(e){ startX = e.touches[0].clientX; }, {passive:true});
     track.addEventListener('touchend', function(e){
@@ -394,7 +388,6 @@
     resetAuto();
 })();
 
-/* ── Lightbox ── */
 (function(){
     var overlay  = document.getElementById('lbOverlay');
     var backdrop = document.getElementById('lbBackdrop');
@@ -406,7 +399,7 @@
     var btnNext  = document.getElementById('lbNext');
     if(!overlay) return;
 
-    /* 收集所有幻燈片資料 */
+
     var slides = Array.prototype.slice.call(
         document.querySelectorAll('.showcase-slide[data-lb-src]')
     );
@@ -434,22 +427,22 @@
         overlay.setAttribute('aria-hidden', 'true');
         document.body.style.overflow = '';
         isOpen = false;
-        /* 延遲清除 src，等淡出完成 */
+
         setTimeout(function(){ if(!isOpen) lbImg.src = ''; }, 380);
     }
 
     function prev(){ open(current - 1); }
     function next(){ open(current + 1); }
 
-    /* 點擊幻燈片開啟 — 區分拖曳和點擊 */
+
     slides.forEach(function(slide, idx){
         var downX = 0;
         slide.addEventListener('mousedown', function(e){ downX = e.clientX; });
         slide.addEventListener('click', function(e){
-            if(Math.abs(e.clientX - downX) > 6) return; /* 拖曳不觸發 */
+            if(Math.abs(e.clientX - downX) > 6) return;
             open(idx);
         });
-        /* 觸控 */
+
         var touchX = 0;
         slide.addEventListener('touchstart', function(e){ touchX = e.touches[0].clientX; }, {passive:true});
         slide.addEventListener('touchend', function(e){
@@ -462,7 +455,7 @@
     btnPrev.addEventListener('click', function(e){ e.stopPropagation(); prev(); });
     btnNext.addEventListener('click', function(e){ e.stopPropagation(); next(); });
 
-    /* 鍵盤 */
+
     document.addEventListener('keydown', function(e){
         if(!isOpen) return;
         if(e.key === 'Escape')     close();
@@ -470,7 +463,7 @@
         if(e.key === 'ArrowRight') next();
     });
 
-    /* 觸控滑動切換 */
+
     var lbTouchX = 0;
     overlay.addEventListener('touchstart', function(e){ lbTouchX = e.touches[0].clientX; }, {passive:true});
     overlay.addEventListener('touchend', function(e){
