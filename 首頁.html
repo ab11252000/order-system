@@ -139,28 +139,8 @@
                 <span class="bulletin-title">最 新 公 告</span>
                 <span class="bulletin-en">NOTICE BOARD</span>
             </div>
-            <ul class="bulletin-list">
-                <li class="bulletin-item bulletin-item--new">
-                    <span class="bulletin-date">2026.04.16</span>
-                    <span class="bulletin-badge">最新</span>
-                    <p class="bulletin-text">123</p>
-                </li>
-                <li class="bulletin-item">
-                    <span class="bulletin-date">2026.04.10</span>
-                    <p class="bulletin-text">123</p>
-                </li>
-                <li class="bulletin-item">
-                    <span class="bulletin-date">2026.03.28</span>
-                    <p class="bulletin-text">123</p>
-                </li>
-                <li class="bulletin-item">
-                    <span class="bulletin-date">2026.03.15</span>
-                    <p class="bulletin-text">工123</p>
-                </li>
-                <li class="bulletin-item">
-                    <span class="bulletin-date">2026.02.20</span>
-                    <p class="bulletin-text">123</p>
-                </li>
+            <ul class="bulletin-list" id="bulletinList">
+                <!-- 由後台管理系統動態載入 -->
             </ul>
             <div class="bulletin-footer">
                 <a href="./聯絡我們.html" class="bulletin-cta">聯絡我們 →</a>
@@ -269,6 +249,38 @@
 </div>
 
 <script>
+/* ── 布告欄：從後台 localStorage 讀取資料 ── */
+(function(){
+    var KEY = 'xyAdmin_bulletin';
+    var DEFAULT = [
+        { date: '2026-04-16', text: '123',  isNew: true  },
+        { date: '2026-04-10', text: '123',  isNew: false },
+        { date: '2026-03-28', text: '123',  isNew: false },
+        { date: '2026-03-15', text: '工123', isNew: false },
+        { date: '2026-02-20', text: '123',  isNew: false }
+    ];
+
+    var list = document.getElementById('bulletinList');
+    if(!list) return;
+
+    var raw = localStorage.getItem(KEY);
+    var items;
+    try { items = raw ? JSON.parse(raw) : DEFAULT; }
+    catch(e){ items = DEFAULT; }
+
+    var html = '';
+    items.forEach(function(item, idx){
+        var disp = item.date ? item.date.replace(/-/g,'.') : '';
+        var cls  = 'bulletin-item' + (item.isNew ? ' bulletin-item--new' : '');
+        html += '<li class="' + cls + '">';
+        html += '<span class="bulletin-date">' + disp + '</span>';
+        if(item.isNew) html += '<span class="bulletin-badge">最新</span>';
+        html += '<p class="bulletin-text">' + item.text + '</p>';
+        html += '</li>';
+    });
+    list.innerHTML = html;
+})();
+
 (function(){
     var toggle = document.querySelector('.menu-toggle');
     var menu   = document.querySelector('.menu');
