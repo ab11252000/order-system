@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>後台管理 · 翔躍企業社</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --brown:   #B55A2A;
+            --brown-d: #8C3F16;
+            --brown-l: #f5ece4;
+            --ink:     #2a1f14;
+            --muted:   #7a6a5a;
+            --border:  #ddd0c4;
+            --bg:      #faf7f4;
+            --white:   #ffffff;
+            --red:     #c0392b;
+            --green:   #27ae60;
+            --blue:    #2980b9;
+            --radius:  10px;
+        }
+
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background: var(--bg);
+            color: var(--ink);
+            min-height: 100vh;
+        }
+
+        /* ── 登入畫面 ── */
+        #loginScreen {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #2a1f14 0%, #5c3a1e 100%);
+        }
+
+        .login-card {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 48px 40px 40px;
+            width: 360px;
+            box-shadow: 0 20px 60px rgba(0,0,0,.35);
+            text-align: center;
+        }
+
+        .login-logo {
+            font-size: 13px;
+            letter-spacing: .18em;
+            color: var(--muted);
+            margin-bottom: 6px;
+        }
+
+        .login-title {
+            font-size: 22px;
+            font-weight: 600;
+            color: var(--brown);
+            letter-spacing: .06em;
+            margin-bottom: 30px;
+        }
+
+        .login-card label {
+            display: block;
+            text-align: left;
+            font-size: 12px;
+            color: var(--muted);
+            letter-spacing: .08em;
+            margin-bottom: 6px;
+        }
+
+        .login-card input[type="password"] {
+            width: 100%;
+            padding: 11px 14px;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius);
+            font-size: 15px;
+            font-family: inherit;
+            color: var(--ink);
+            outline: none;
+            transition: border-color .2s;
+            margin-bottom: 18px;
+        }
+
+        .login-card input[type="password"]:focus { border-color: var(--brown); }
+
+        .btn-login {
+            width: 100%;
+            padding: 12px;
+            background: var(--brown);
+            color: #fff;
+            border: none;
+            border-radius: var(--radius);
+            font-size: 15px;
+            font-family: inherit;
+            font-weight: 500;
+            letter-spacing: .1em;
+            cursor: pointer;
+            transition: background .2s;
+        }
+
+        .btn-login:hover { background: var(--brown-d); }
+
+        .login-error {
+            margin-top: 14px;
+            font-size: 13px;
+            color: var(--red);
+            display: none;
+        }
+
+        /* ── 後台 ── */
+        #adminScreen { display: none; }
+
+        .admin-header {
+            background: linear-gradient(90deg, #2a1f14, #5c3a1e);
+            color: #fff;
+            padding: 0 32px;
+            height: 58px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 12px rgba(0,0,0,.3);
+        }
+
+        .admin-header-title { font-size: 15px; font-weight: 600; letter-spacing: .12em; }
+        .admin-header-sub { font-size: 11px; color: rgba(255,255,255,.55); letter-spacing: .08em; }
+
+        .status-dot {
+            display: inline-block;
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: #aaa;
+            margin-right: 6px;
+            vertical-align: middle;
+            transition: background .3s;
+        }
+        .status-dot.ok  { background: #2ecc71; }
+        .status-dot.err { background: var(--red); }
+
+        .header-right { display: flex; align-items: center; gap: 14px; }
+
+        .status-label { font-size: 11px; color: rgba(255,255,255,.65); }
+
+        .btn-logout {
+            background: rgba(255,255,255,.12);
+            color: #fff;
+            border: 1px solid rgba(255,255,255,.25);
+            border-radius: 6px;
+            padding: 6px 16px;
+            font-size: 12px;
+            font-family: inherit;
+            cursor: pointer;
+            letter-spacing: .06em;
+            transition: background .2s;
+        }
+        .btn-logout:hover { background: rgba(255,255,255,.22); }
+
+        .admin-body {
+            max-width: 860px;
+            margin: 36px auto;
+            padding: 0 20px 60px;
+        }
+
+        /* ── 卡片 ── */
+        .card {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 26px 28px 22px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 12px rgba(0,0,0,.05);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 20px;
+            padding-bottom: 14px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .card-title { font-size: 15px; font-weight: 600; color: var(--brown); letter-spacing: .06em; }
+        .card-hint  { font-size: 11px; color: var(--muted); }
+
+        /* ── 初始設定區 ── */
+        .setup-steps { counter-reset: step; display: flex; flex-direction: column; gap: 16px; }
+
+        .setup-step {
+            display: flex;
+            gap: 14px;
+            align-items: flex-start;
+        }
+
+        .step-num {
+            counter-increment: step;
+            flex-shrink: 0;
+            width: 28px; height: 28px;
+            border-radius: 50%;
+            background: var(--brown);
+            color: #fff;
+            font-size: 13px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 2px;
+        }
+
+        .step-body { flex: 1; }
+
+        .step-title { font-size: 13.5px; font-weight: 600; margin-bottom: 4px; }
+
+        .step-desc {
+            font-size: 12.5px;
+            color: var(--muted);
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        .step-desc a { color: var(--brown); }
+
+        .setup-input-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+
+        .setup-input {
+            flex: 1;
+            min-width: 200px;
+            padding: 9px 12px;
+            border: 1.5px solid var(--border);
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 13.5px;
+            color: var(--ink);
+            outline: none;
+            transition: border-color .2s;
+        }
+        .setup-input:focus { border-color: var(--brown); }
+
+        .copy-box {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #f0f4f0;
+            border: 1px solid #c8dbc8;
+            border-radius: 8px;
+            padding: 9px 12px;
+            font-size: 13px;
+            font-family: monospace;
+            color: #2a5a2a;
+            word-break: break-all;
+        }
+
+        .btn-copy {
+            flex-shrink: 0;
+            padding: 5px 12px;
+            background: var(--green);
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            font-size: 12px;
+            font-family: inherit;
+            cursor: pointer;
+            transition: filter .2s;
+        }
+        .btn-copy:hover { filter: brightness(1.1); }
+
+        /* ── 公告列表 ── */
+        .bulletin-items { display: flex; flex-direction: column; gap: 12px; }
+
+        .bulletin-row {
+            display: grid;
+            grid-template-columns: 152px 1fr 100px 36px;
+            gap: 10px;
+            align-items: start;
+            background: var(--brown-l);
+            border: 1px solid #e8d8cc;
+            border-radius: 10px;
+            padding: 13px 13px 11px;
+            transition: box-shadow .2s;
+        }
+        .bulletin-row:hover { box-shadow: 0 2px 10px rgba(181,90,42,.12); }
+
+        .row-label {
+            font-size: 10px;
+            color: var(--muted);
+            letter-spacing: .06em;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .row-field { display: flex; flex-direction: column; }
+
+        .bulletin-row input[type="date"],
+        .bulletin-row textarea {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1.5px solid var(--border);
+            border-radius: 7px;
+            font-family: inherit;
+            font-size: 13.5px;
+            color: var(--ink);
+            background: var(--white);
+            outline: none;
+            transition: border-color .2s;
+            resize: none;
+        }
+        .bulletin-row input:focus,
+        .bulletin-row textarea:focus { border-color: var(--brown); }
+        .bulletin-row textarea { min-height: 52px; line-height: 1.5; }
+
+        .row-badge-wrap { display: flex; flex-direction: column; gap: 6px; }
+
+        .badge-toggle {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            color: var(--ink);
+            user-select: none;
+        }
+        .badge-toggle input[type="checkbox"] {
+            width: 15px; height: 15px;
+            accent-color: var(--brown);
+            cursor: pointer;
+        }
+
+        .btn-delete {
+            background: none;
+            border: 1.5px solid #e0bbb0;
+            color: #c0775a;
+            border-radius: 7px;
+            width: 36px; height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all .2s;
+            flex-shrink: 0;
+        }
+        .btn-delete:hover { background: #fde8e0; border-color: var(--red); color: var(--red); }
+
+        .actions-row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 16px;
+            align-items: center;
+        }
+
+        /* ── 按鈕 ── */
+        .btn {
+            padding: 10px 22px;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 13.5px;
+            font-weight: 500;
+            letter-spacing: .06em;
+            cursor: pointer;
+            border: none;
+            transition: all .18s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .btn:disabled { opacity: .5; cursor: not-allowed; }
+        .btn-primary  { background: var(--brown);  color: #fff; }
+        .btn-primary:hover:not(:disabled)  { background: var(--brown-d); }
+        .btn-outline  { background: transparent; border: 1.5px solid var(--brown); color: var(--brown); }
+        .btn-outline:hover:not(:disabled)  { background: var(--brown-l); }
+        .btn-success  { background: var(--green);  color: #fff; }
+        .btn-success:hover:not(:disabled)  { filter: brightness(1.1); }
+        .btn-blue     { background: var(--blue);   color: #fff; }
+        .btn-blue:hover:not(:disabled)     { filter: brightness(1.1); }
+
+        .saving-msg { font-size: 12px; color: var(--muted); }
+
+        /* ── 預覽 ── */
+        .preview-board {
+            background: linear-gradient(135deg, #2a1f14 0%, #5c3a1e 100%);
+            border-radius: 12px;
+            padding: 22px 20px 18px;
+            color: #e8d8cc;
+        }
+        .preview-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 14px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(255,255,255,.12);
+        }
+        .preview-title { font-size: 14px; font-weight: 600; letter-spacing: .2em; }
+        .preview-en    { font-size: 10px; color: rgba(255,255,255,.4); letter-spacing: .14em; }
+        .preview-list  { list-style: none; }
+        .preview-item  {
+            display: flex;
+            align-items: baseline;
+            gap: 10px;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255,255,255,.07);
+            font-size: 13px;
+        }
+        .preview-item:last-child { border-bottom: none; }
+        .preview-date  { color: rgba(255,255,255,.5); font-size: 11.5px; white-space: nowrap; }
+        .preview-badge {
+            font-size: 10px;
+            background: var(--brown);
+            color: #fff;
+            padding: 1px 7px;
+            border-radius: 20px;
+            white-space: nowrap;
+        }
+
+        /* ── 密碼區 ── */
+        .pw-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+            margin-bottom: 16px;
+        }
+        .pw-grid label {
+            font-size: 11px;
+            color: var(--muted);
+            letter-spacing: .06em;
+            display: block;
+            margin-bottom: 5px;
+        }
+        .pw-grid input {
+            width: 100%;
+            padding: 9px 12px;
+            border: 1.5px solid var(--border);
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 14px;
+            outline: none;
+            transition: border-color .2s;
+        }
+        .pw-grid input:focus { border-color: var(--brown); }
+        .pw-msg { font-size: 12.5px; margin-top: 10px; min-height: 18px; }
+
+        /* ── Toast ── */
+        .toast {
+            position: fixed;
+            bottom: 28px;
+            right: 28px;
+            background: #2a1f14;
+            color: #fff;
+            padding: 12px 22px;
+            border-radius: 10px;
+            font-size: 13.5px;
+            letter-spacing: .06em;
+            box-shadow: 0 6px 24px rgba(0,0,0,.3);
+            transform: translateY(20px);
+            opacity: 0;
+            transition: all .3s;
+            pointer-events: none;
+            z-index: 999;
+        }
+        .toast.show { transform: translateY(0); opacity: 1; }
+
+        /* ── 警告橫幅 ── */
+        .alert-banner {
+            background: #fff8e1;
+            border: 1px solid #f0c040;
+            border-radius: 10px;
+            padding: 14px 18px;
+            font-size: 13px;
+            color: #7a5c00;
+            margin-bottom: 22px;
+            line-height: 1.6;
+        }
+        .alert-banner strong { color: #5a3e00; }
+
+        @media (max-width: 640px) {
+            .bulletin-row { grid-template-columns: 1fr 1fr; }
+            .bulletin-row > .row-field:nth-child(2) { grid-column: 1 / -1; }
+            .pw-grid { grid-template-columns: 1fr; }
+            .admin-header { padding: 0 16px; }
+            .admin-body { margin-top: 24px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ══════════ 登入 ══════════ -->
+<div id="loginScreen">
+    <div class="login-card">
+        <div class="login-logo">翔躍企業社 · XIANG YUE</div>
+        <div class="login-title">後 台 管 理</div>
+        <label for="pwInput">管 理 員 密 碼</label>
+        <input type="password" id="pwInput" placeholder="請輸入密碼" autocomplete="current-password">
+        <button class="btn-login" onclick="doLogin()">登 入</button>
+        <div class="login-error" id="loginError">密碼錯誤，請重新輸入</div>
+    </div>
+</div>
+
+<!-- ══════════ 後台 ══════════ -->
+<div id="adminScreen">
+
+    <header class="admin-header">
+        <div>
+            <div class="admin-header-title">翔躍企業社 · 後台管理</div>
+            <div class="admin-header-sub">XIANG YUE ENTERPRISE · ADMIN</div>
+        </div>
+        <div class="header-right">
+            <span class="status-label">
+                <span class="status-dot" id="statusDot"></span>
+                <span id="statusText">未連線</span>
+            </span>
+            <button class="btn-logout" onclick="doLogout()">登 出</button>
+        </div>
+    </header>
+
+    <main class="admin-body">
+
+        <!-- ── 第一次設定提示 ── -->
+        <div class="alert-banner" id="setupBanner" style="display:none">
+            <strong>⚙️ 首次設定</strong>：請先完成下方「JSONBin 雲端設定」，才能讓公告同步到 GitHub Pages 上的首頁。
+        </div>
+
+        <!-- ── JSONBin 設定 ── -->
+        <div class="card" id="setupCard">
+            <div class="card-header">
+                <span class="card-title">☁️ JSONBin 雲端設定</span>
+                <span class="card-hint">只需設定一次，之後每次儲存都會同步到線上</span>
+            </div>
+
+            <div class="setup-steps">
+
+                <!-- Step 1 -->
+                <div class="setup-step">
+                    <div class="step-num">1</div>
+                    <div class="step-body">
+                        <div class="step-title">註冊 JSONBin 帳號</div>
+                        <div class="step-desc">
+                            前往 <a href="https://jsonbin.io" target="_blank">jsonbin.io</a> 免費註冊，完成後進入後台。
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="setup-step">
+                    <div class="step-num">2</div>
+                    <div class="step-body">
+                        <div class="step-title">取得 Master Key</div>
+                        <div class="step-desc">
+                            登入後點右上角帳號 → <strong>API Keys</strong>，複製 <strong>Master Key</strong>（以 $ 開頭的那串），貼到下方。
+                        </div>
+                        <div class="setup-input-row">
+                            <input type="password" class="setup-input" id="inputMasterKey" placeholder="貼上 Master Key（$2b$10$...）">
+                            <button class="btn btn-primary" onclick="saveMasterKey()">儲存 Key</button>
+                        </div>
+                        <div id="masterKeyStatus" style="font-size:12px;margin-top:8px;color:var(--muted)"></div>
+                    </div>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="setup-step">
+                    <div class="step-num">3</div>
+                    <div class="step-body">
+                        <div class="step-title">建立公告資料庫</div>
+                        <div class="step-desc">
+                            輸入 Master Key 後，點下方按鈕自動建立一個雲端資料庫（Bin）。
+                        </div>
+                        <button class="btn btn-blue" onclick="createBin()" id="btnCreateBin">⚡ 自動建立資料庫</button>
+                        <div id="createBinStatus" style="font-size:12px;margin-top:10px;color:var(--muted)"></div>
+                    </div>
+                </div>
+
+                <!-- Step 4：有 Bin ID 才顯示 -->
+                <div class="setup-step" id="step4" style="display:none">
+                    <div class="step-num">4</div>
+                    <div class="step-body">
+                        <div class="step-title">把 Bin ID 填入首頁</div>
+                        <div class="step-desc">
+                            複製下方的 Bin ID，打開 <strong>首頁.html</strong>，找到這行並替換：<br>
+                            <code style="font-size:12px;background:#f0f0f0;padding:2px 6px;border-radius:4px">var BIN_ID = 'YOUR_BIN_ID';</code>
+                        </div>
+                        <div class="copy-box" id="binIdBox">
+                            <span id="binIdText">—</span>
+                            <button class="btn-copy" onclick="copyBinId()">複製</button>
+                        </div>
+                        <div style="font-size:12px;color:var(--green);margin-top:8px" id="step4Done"></div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ── 布告欄管理 ── -->
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">📌 布告欄管理</span>
+                <span class="card-hint">修改後點「儲存並上傳」即同步至所有裝置</span>
+            </div>
+
+            <div class="bulletin-items" id="bulletinItems"></div>
+
+            <div class="actions-row">
+                <button class="btn btn-outline" onclick="addRow()">＋ 新增公告</button>
+                <button class="btn btn-success" onclick="saveAll()" id="btnSave">✓ 儲存並上傳</button>
+                <span class="saving-msg" id="savingMsg"></span>
+            </div>
+        </div>
+
+        <!-- ── 即時預覽 ── -->
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">👁 即時預覽</span>
+                <span class="card-hint">儲存後首頁將顯示如下</span>
+            </div>
+            <div class="preview-board">
+                <div class="preview-header">
+                    <span>📌</span>
+                    <span class="preview-title">最 新 公 告</span>
+                    <span class="preview-en">NOTICE BOARD</span>
+                </div>
+                <ul class="preview-list" id="previewList"></ul>
+            </div>
+        </div>
+
+        <!-- ── 更改密碼 ── -->
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">🔒 更改管理密碼</span>
+            </div>
+            <div class="pw-grid">
+                <div>
+                    <label>舊密碼</label>
+                    <input type="password" id="pwOld" placeholder="請輸入舊密碼">
+                </div>
+                <div>
+                    <label>新密碼</label>
+                    <input type="password" id="pwNew" placeholder="請輸入新密碼">
+                </div>
+            </div>
+            <button class="btn btn-primary" onclick="changePassword()">更 新 密 碼</button>
+            <div class="pw-msg" id="pwMsg"></div>
+        </div>
+
+    </main>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ════════════════════════════════════════
+   ★ 預設密碼（首次使用可在此直接修改）
+   ════════════════════════════════════════ */
+var DEFAULT_PASSWORD = 'admin1234';
+
+/* ════ 鍵名 ════ */
+var KEY_PW         = 'xy_pw';
+var KEY_SESSION    = 'xy_session';
+var KEY_MASTER_KEY = 'xy_masterKey';
+var KEY_BIN_ID     = 'xy_binId';
+var KEY_CACHE      = 'xy_bulletinCache';
+
+/* ════ 預設公告（JSONBin 未設定時使用）════ */
+var DEFAULT_ITEMS = [
+    { date: '2026-04-16', text: '歡迎光臨翔躍企業社', isNew: true  },
+    { date: '2026-04-10', text: '新款腳底按摩椅樣品已上架',  isNew: false },
+    { date: '2026-03-28', text: '工廠直營，全程客製化製作',  isNew: false }
+];
+
+/* ════════════════════════════════════════
+   工具
+   ════════════════════════════════════════ */
+function getPassword(){ return localStorage.getItem(KEY_PW) || DEFAULT_PASSWORD; }
+function getMasterKey(){ return localStorage.getItem(KEY_MASTER_KEY) || ''; }
+function getBinId(){ return localStorage.getItem(KEY_BIN_ID) || ''; }
+
+function getCachedItems(){
+    var raw = localStorage.getItem(KEY_CACHE);
+    if(raw){ try{ return JSON.parse(raw); }catch(e){} }
+    return DEFAULT_ITEMS.map(function(i){ return Object.assign({}, i); });
+}
+
+function setCachedItems(items){
+    localStorage.setItem(KEY_CACHE, JSON.stringify(items));
+}
+
+function showToast(msg, dur){
+    var t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(function(){ t.classList.remove('show'); }, dur || 2600);
+}
+
+function setStatus(ok, text){
+    var dot  = document.getElementById('statusDot');
+    var label= document.getElementById('statusText');
+    dot.className  = 'status-dot ' + (ok ? 'ok' : 'err');
+    label.textContent = text;
+}
+
+function escHtml(str){
+    return String(str||'')
+        .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+        .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+/* ════════════════════════════════════════
+   登入 / 登出
+   ════════════════════════════════════════ */
+function doLogin(){
+    var val = document.getElementById('pwInput').value;
+    if(val === getPassword()){
+        sessionStorage.setItem(KEY_SESSION, '1');
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('adminScreen').style.display = 'block';
+        initAdmin();
+    } else {
+        document.getElementById('loginError').style.display = 'block';
+        document.getElementById('pwInput').value = '';
+    }
+}
+
+document.getElementById('pwInput').addEventListener('keydown', function(e){
+    if(e.key === 'Enter') doLogin();
+});
+
+function doLogout(){
+    sessionStorage.removeItem(KEY_SESSION);
+    document.getElementById('adminScreen').style.display = 'none';
+    document.getElementById('loginScreen').style.display = 'flex';
+    document.getElementById('pwInput').value = '';
+    document.getElementById('loginError').style.display = 'none';
+}
+
+window.addEventListener('DOMContentLoaded', function(){
+    if(sessionStorage.getItem(KEY_SESSION)){
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('adminScreen').style.display = 'block';
+        initAdmin();
+    }
+});
+
+/* ════════════════════════════════════════
+   初始化後台
+   ════════════════════════════════════════ */
+function initAdmin(){
+    var binId = getBinId();
+    var mk    = getMasterKey();
+
+    /* 顯示已儲存的 Key（遮蔽）*/
+    if(mk){
+        document.getElementById('masterKeyStatus').textContent = '✓ Master Key 已儲存（' + mk.substring(0,8) + '…）';
+    }
+
+    if(binId){
+        showBinId(binId);
+        setStatus(true, '雲端已連線');
+        loadFromCloud();
+    } else {
+        document.getElementById('setupBanner').style.display = 'block';
+        setStatus(false, '尚未設定雲端');
+        renderRows(getCachedItems());
+        renderPreviewWith(getCachedItems());
+    }
+}
+
+/* ════════════════════════════════════════
+   JSONBin API
+   ════════════════════════════════════════ */
+var JSONBIN_BASE = 'https://api.jsonbin.io/v3';
+
+function loadFromCloud(){
+    var binId = getBinId();
+    var mk    = getMasterKey();
+    if(!binId || !mk){ renderRows(getCachedItems()); return; }
+
+    setStatus(true, '載入中…');
+    fetch(JSONBIN_BASE + '/b/' + binId + '/latest', {
+        headers: { 'X-Master-Key': mk }
+    })
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+        var items = data.record || data;
+        if(Array.isArray(items)){
+            setCachedItems(items);
+            renderRows(items);
+            renderPreviewWith(items);
+            setStatus(true, '雲端已連線');
+        } else {
+            throw new Error('格式錯誤');
+        }
+    })
+    .catch(function(e){
+        setStatus(false, '載入失敗');
+        renderRows(getCachedItems());
+        renderPreviewWith(getCachedItems());
+        showToast('⚠ 無法從雲端載入，顯示本地快取');
+    });
+}
+
+function saveMasterKey(){
+    var val = document.getElementById('inputMasterKey').value.trim();
+    if(!val){ showToast('請貼上 Master Key'); return; }
+    localStorage.setItem(KEY_MASTER_KEY, val);
+    document.getElementById('masterKeyStatus').style.color = 'var(--green)';
+    document.getElementById('masterKeyStatus').textContent = '✓ Master Key 已儲存（' + val.substring(0,8) + '…）';
+    showToast('✓ Master Key 儲存成功');
+}
+
+function createBin(){
+    var mk = getMasterKey();
+    if(!mk){
+        showToast('請先儲存 Master Key');
+        return;
+    }
+    var btn = document.getElementById('btnCreateBin');
+    var statusEl = document.getElementById('createBinStatus');
+    btn.disabled = true;
+    btn.textContent = '建立中…';
+    statusEl.textContent = '';
+
+    var initialData = getCachedItems();
+
+    fetch(JSONBIN_BASE + '/b', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Master-Key': mk,
+            'X-Bin-Name': 'xy-bulletin',
+            'X-Bin-Private': 'false'
+        },
+        body: JSON.stringify(initialData)
+    })
+    .then(function(r){
+        if(!r.ok) throw new Error('HTTP ' + r.status);
+        return r.json();
+    })
+    .then(function(data){
+        var id = data.metadata && data.metadata.id;
+        if(!id) throw new Error('No ID returned');
+        localStorage.setItem(KEY_BIN_ID, id);
+        showBinId(id);
+        setStatus(true, '雲端已連線');
+        renderRows(getCachedItems());
+        renderPreviewWith(getCachedItems());
+        statusEl.style.color = 'var(--green)';
+        statusEl.textContent = '✓ 建立成功！Bin ID：' + id;
+        btn.textContent = '✓ 已建立';
+        document.getElementById('setupBanner').style.display = 'none';
+        showToast('✓ 資料庫建立成功！請複製 Bin ID 填入首頁.html', 4000);
+    })
+    .catch(function(e){
+        btn.disabled = false;
+        btn.textContent = '⚡ 自動建立資料庫';
+        statusEl.style.color = 'var(--red)';
+        statusEl.textContent = '✗ 建立失敗，請確認 Master Key 是否正確';
+        showToast('✗ 建立失敗：' + e.message);
+    });
+}
+
+function showBinId(id){
+    document.getElementById('step4').style.display = 'flex';
+    document.getElementById('binIdText').textContent = id;
+}
+
+function copyBinId(){
+    var id = getBinId();
+    if(!id){ showToast('尚無 Bin ID'); return; }
+    navigator.clipboard.writeText(id).then(function(){
+        document.getElementById('step4Done').textContent = '✓ 已複製！';
+        showToast('✓ Bin ID 已複製');
+        setTimeout(function(){ document.getElementById('step4Done').textContent = ''; }, 2500);
+    });
+}
+
+/* ════════════════════════════════════════
+   公告列表
+   ════════════════════════════════════════ */
+function renderRows(items){
+    var wrap = document.getElementById('bulletinItems');
+    wrap.innerHTML = '';
+    items.forEach(function(item, idx){
+        wrap.appendChild(buildRow(item, idx));
+    });
+}
+
+function buildRow(item, idx){
+    var row = document.createElement('div');
+    row.className = 'bulletin-row';
+    row.innerHTML =
+        '<div class="row-field">' +
+            '<span class="row-label">日 期</span>' +
+            '<input type="date" class="f-date" value="' + escHtml(item.date) + '" oninput="livePreview()">' +
+        '</div>' +
+        '<div class="row-field">' +
+            '<span class="row-label">公 告 內 容</span>' +
+            '<textarea class="f-text" rows="2" oninput="livePreview()">' + escHtml(item.text) + '</textarea>' +
+        '</div>' +
+        '<div class="row-field row-badge-wrap">' +
+            '<span class="row-label">標 籤</span>' +
+            '<label class="badge-toggle">' +
+                '<input type="checkbox" class="f-new"' + (item.isNew ? ' checked' : '') + ' onchange="livePreview()"> 顯示「最新」' +
+            '</label>' +
+        '</div>' +
+        '<button class="btn-delete" onclick="deleteRow(this)" title="刪除">✕</button>';
+    return row;
+}
+
+function deleteRow(btn){ btn.closest('.bulletin-row').remove(); livePreview(); }
+
+function addRow(){
+    var t = new Date();
+    var item = {
+        date: t.getFullYear() + '-' + String(t.getMonth()+1).padStart(2,'0') + '-' + String(t.getDate()).padStart(2,'0'),
+        text: '', isNew: false
+    };
+    document.getElementById('bulletinItems').appendChild(buildRow(item, 99));
+    livePreview();
+}
+
+function collectRows(){
+    var items = [];
+    document.querySelectorAll('.bulletin-row').forEach(function(row){
+        items.push({
+            date:  row.querySelector('.f-date').value,
+            text:  row.querySelector('.f-text').value.trim(),
+            isNew: row.querySelector('.f-new').checked
+        });
+    });
+    return items;
+}
+
+function saveAll(){
+    var items = collectRows();
+    var binId = getBinId();
+    var mk    = getMasterKey();
+    var btn   = document.getElementById('btnSave');
+    var msg   = document.getElementById('savingMsg');
+
+    /* 先存本地快取 */
+    setCachedItems(items);
+
+    if(!binId || !mk){
+        /* 尚未設定雲端，只存本地 */
+        renderPreviewWith(items);
+        showToast('✓ 已儲存至本地（尚未連線雲端）');
+        return;
+    }
+
+    btn.disabled = true;
+    msg.textContent = '上傳中…';
+
+    fetch(JSONBIN_BASE + '/b/' + binId, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Master-Key': mk
+        },
+        body: JSON.stringify(items)
+    })
+    .then(function(r){
+        if(!r.ok) throw new Error('HTTP ' + r.status);
+        return r.json();
+    })
+    .then(function(){
+        btn.disabled = false;
+        msg.textContent = '';
+        setStatus(true, '已同步');
+        renderPreviewWith(items);
+        showToast('✓ 已上傳至雲端，首頁即時更新！');
+    })
+    .catch(function(e){
+        btn.disabled = false;
+        msg.textContent = '';
+        setStatus(false, '上傳失敗');
+        showToast('✗ 上傳失敗：' + e.message);
+    });
+}
+
+/* ════ 即時預覽 ════ */
+function livePreview(){ renderPreviewWith(collectRows()); }
+
+function renderPreviewWith(items){
+    var list = document.getElementById('previewList');
+    list.innerHTML = '';
+    items.forEach(function(item){
+        if(!item.text) return;
+        var li = document.createElement('li');
+        li.className = 'preview-item';
+        li.innerHTML =
+            '<span class="preview-date">' + escHtml((item.date||'').replace(/-/g,'.')) + '</span>' +
+            (item.isNew ? '<span class="preview-badge">最新</span>' : '') +
+            '<span>' + escHtml(item.text) + '</span>';
+        list.appendChild(li);
+    });
+}
+
+/* ════════════════════════════════════════
+   更改密碼
+   ════════════════════════════════════════ */
+function changePassword(){
+    var oldPw = document.getElementById('pwOld').value;
+    var newPw = document.getElementById('pwNew').value;
+    var msgEl = document.getElementById('pwMsg');
+    if(oldPw !== getPassword()){
+        msgEl.style.color = 'var(--red)';
+        msgEl.textContent = '舊密碼輸入錯誤';
+        return;
+    }
+    if(newPw.length < 4){
+        msgEl.style.color = 'var(--red)';
+        msgEl.textContent = '新密碼請至少 4 個字元';
+        return;
+    }
+    localStorage.setItem(KEY_PW, newPw);
+    document.getElementById('pwOld').value = '';
+    document.getElementById('pwNew').value = '';
+    msgEl.style.color = 'var(--green)';
+    msgEl.textContent = '密碼已成功更新';
+    showToast('✓ 密碼已更新');
+    setTimeout(function(){ msgEl.textContent = ''; }, 3000);
+}
+</script>
+</body>
+</html>
