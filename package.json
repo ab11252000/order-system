@@ -1,0 +1,46 @@
+{
+  "name": "xiangyue-admin",
+  "version": "1.0.0",
+  "description": "翔躍企業社後台管理系統",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder --win portable"
+  },
+  "build": {
+    "appId": "com.xiangyue.admin",
+    "productName": "翔躍後台管理",
+    "win": {
+      "target": [
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    "files": [
+      "main.js",
+      "後台管理.html",
+      "後台管理-出貨管理.html",
+      "後台管理-商品管理.html",
+      "後台管理-進階設定.html",
+      "css/**",
+      "img/**",
+      "index.css",
+      "style.css"
+    ],
+    "directories": {
+      "output": "dist"
+    },
+    "portable": {
+      "artifactName": "翔躍後台管理.exe"
+    }
+  },
+  "devDependencies": {
+    "electron": "^28.1.0",
+    "electron-builder": "^24.13.3",
+    "png-to-ico": "^3.0.1"
+  }
+}
