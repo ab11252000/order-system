@@ -189,11 +189,7 @@
 // ── 動態載入商品（雲端優先，fallback localStorage）────────────
 (function(){
   var CAT = '腳底按摩椅';
-  var DEFAULT = [
-    { id:'d1', name:'標準款腳底按摩椅', price:'歡迎詢價', desc:'經典座椅結構，適合一般養生館與個人工作室使用，舒適耐用，坐感穩固，皮料可依需求客製選色。', img:'./img/腳底按摩椅.png' },
-    { id:'d2', name:'豪華款腳底按摩椅', price:'歡迎詢價', desc:'加寬加厚坐墊設計，提供更佳的包覆感與久坐舒適性，適合高端會館或注重質感的場所選用。',   img:'./img/腳底按摩椅2.jpg' },
-    { id:'d3', name:'商業款腳底按摩椅', price:'歡迎詢價', desc:'採用高耐磨商業級皮料，專為高使用頻率場所設計，結構加強抗壓，維護簡便，適合大型養生館連鎖採購。', img:'./img/腳底按摩椅3.jpg' },
-  ];
+  var DEFAULT = [];
 
   function renderProds(prods) {
     var grid = document.getElementById('sampleGrid');
@@ -217,7 +213,7 @@
   try { var all = JSON.parse(localStorage.getItem('xy_products')||'{}'); renderProds(all[CAT]); } catch(e){ renderProds(null); }
 
   // 背景從 JSONBin 拉最新
-  var binId = localStorage.getItem('xy_productsBinId') || '69e39183856a6821894998b0';
+  var binId = localStorage.getItem('xy_productsBinId') || '69e3a59a36566621a8c8be96';
   var masterKey = localStorage.getItem('xy_masterKey') || '';
   if (binId) {
     var headers = {};
