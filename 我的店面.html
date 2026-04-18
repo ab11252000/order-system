@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>我的店面 — 翔躍企業社</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+<style>
+:root {
+  --gold:        #C6A96B;
+  --gold-dark:   #B8965A;
+  --gold-dim:    rgba(198,169,107,.08);
+  --gold-border: rgba(198,169,107,.28);
+  --text:        #111827;
+  --text-2:      #6B7280;
+  --text-3:      #9CA3AF;
+  --border:      #E5E7EB;
+  --border-soft: #F3F4F6;
+  --bg:          #F8FAFC;
+  --card:        #FFFFFF;
+  --green:       #22C55E;
+  --green-dark:  #16A34A;
+  --green-dim:   rgba(34,197,94,.10);
+  --red:         #EF4444;
+}
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body {
+  font-family:'Noto Sans TC', sans-serif;
+  background:var(--bg); color:var(--text);
+  min-height:100vh; -webkit-font-smoothing:antialiased;
+}
+
+/* ── Nav ── */
+.nav {
+  background:var(--card); border-bottom:1px solid var(--border);
+  height:54px; display:flex; align-items:center; padding:0 28px;
+  position:sticky; top:0; z-index:100;
+}
+.nav-brand { display:flex; align-items:center; gap:8px; text-decoration:none; flex-shrink:0; }
+.nav-brand-mark { width:7px; height:7px; border-radius:50%; background:var(--gold); }
+.nav-brand-text { font-size:14px; font-weight:800; color:var(--text); letter-spacing:.5px; }
+.nav-links { display:flex; align-items:center; flex:1; justify-content:center; }
+.nav-link {
+  padding:6px 16px; font-size:13px; font-weight:500;
+  text-decoration:none; color:var(--text-3); transition:color .15s;
+}
+.nav-link:hover { color:var(--text-2); }
+.nav-link.active { color:var(--gold); font-weight:700; }
+.nav-right { display:flex; align-items:center; gap:10px; flex-shrink:0; }
+.user-pill {
+  display:flex; align-items:center; gap:8px;
+  padding:4px 12px 4px 5px; border-radius:100px; border:1px solid var(--border);
+}
+.user-avatar {
+  width:24px; height:24px; border-radius:50%;
+  border:1.5px solid var(--gold-border); background:var(--gold-dim);
+  font-size:10px; font-weight:800; color:var(--gold);
+  display:flex; align-items:center; justify-content:center;
+}
+.user-name { font-size:12px; font-weight:600; color:var(--text-2); }
+.btn-logout {
+  padding:5px 12px; border-radius:7px; border:1px solid var(--border);
+  background:transparent; color:var(--text-3); font-size:12px; font-weight:500;
+  font-family:inherit; cursor:pointer; transition:all .15s;
+}
+.btn-logout:hover { color:var(--red); border-color:#FECACA; background:#FFF5F5; }
+
+/* ── Layout ── */
+.main {
+  max-width:600px; margin:0 auto; padding:48px 20px 80px;
+  animation:fadeIn .5s cubic-bezier(.22,1,.36,1) both;
+}
+@keyframes fadeIn {
+  from { opacity:0; transform:translateY(12px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+
+.page-eyebrow {
+  font-size:10.5px; font-weight:700; letter-spacing:2.5px;
+  text-transform:uppercase; color:var(--text-3); margin-bottom:6px;
+}
+.page-title { font-size:30px; font-weight:900; letter-spacing:-.5px; color:var(--text); margin-bottom:4px; }
+.page-sub   { font-size:13px; color:var(--text-3); margin-bottom:36px; }
+
+/* ── Section label ── */
+.sec-label {
+  font-size:10.5px; font-weight:700; letter-spacing:2px; text-transform:uppercase;
+  color:var(--text-3); margin-bottom:14px; display:flex; align-items:center; gap:10px;
+}
+.sec-label::after { content:''; flex:1; height:1px; background:var(--border); }
+
+/* ── Notice strip ── */
+.notice-strip {
+  background:#FEF7E7; border:1px solid #FDECC8;
+  border-radius:8px; padding:10px 14px;
+  font-size:12.5px; color:#92400E; line-height:1.7;
+  margin-bottom:20px;
+}
+
+/* ── Form card ── */
+.form-card {
+  background:var(--card); border:1px solid var(--border); border-radius:12px;
+  padding:28px;
+  box-shadow:0 1px 2px rgba(0,0,0,.05), 0 4px 20px rgba(0,0,0,.06);
+  margin-bottom:40px;
+}
+
+.form-group { margin-bottom:20px; }
+.form-label {
+  display:block; font-size:11px; font-weight:700; letter-spacing:.8px;
+  text-transform:uppercase; color:var(--text-3); margin-bottom:8px;
+}
+.form-label .req { color:var(--gold); margin-left:2px; }
+.form-control {
+  width:100%; padding:12px 14px;
+  border:1.5px solid var(--border); border-radius:8px;
+  font-size:14px; font-family:inherit; color:var(--text);
+  background:var(--card); outline:none;
+  transition:border-color .2s, box-shadow .2s; line-height:1.6; appearance:none;
+}
+.form-control:focus {
+  border-color:var(--gold);
+  box-shadow:0 0 0 3px rgba(198,169,107,.10);
+}
+.form-control::placeholder { color:var(--text-3); }
+select.form-control {
+  cursor:pointer;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='M4 6l4 4 4-4' stroke='%239CA3AF' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat; background-position:right 14px center; padding-right:38px;
+}
+.row-2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+
+.btn-submit {
+  width:100%; padding:15px;
+  background:var(--gold); color:#fff;
+  border:none; border-radius:10px;
+  font-size:15px; font-weight:700; font-family:inherit;
+  letter-spacing:.4px; cursor:pointer;
+  box-shadow:0 2px 12px rgba(198,169,107,.30);
+  transition:background .2s, box-shadow .2s, transform .1s;
+  margin-top:8px;
+}
+.btn-submit:hover { background:var(--gold-dark); box-shadow:0 4px 22px rgba(198,169,107,.40); }
+.btn-submit:active { transform:scale(.99); }
+
+/* ── Store grid ── */
+.store-grid { display:flex; flex-direction:column; gap:10px; }
+
+.store-card {
+  background:var(--card); border-radius:12px; padding:20px 22px;
+  border:1px solid var(--border);
+  box-shadow:0 1px 2px rgba(0,0,0,.04);
+  transition:border-color .2s, box-shadow .2s;
+}
+.store-card:hover { border-color:var(--gold-border); box-shadow:0 2px 12px rgba(198,169,107,.08); }
+
+.store-header { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:12px; gap:8px; }
+.store-name   { font-size:16px; font-weight:800; color:var(--text); }
+.store-info   { font-size:12.5px; color:var(--text-2); line-height:2; }
+.store-row    { display:flex; gap:10px; }
+.store-lbl    { color:var(--text-3); min-width:28px; font-size:10.5px; font-weight:700; letter-spacing:.5px; text-transform:uppercase; }
+
+/* ── Badges ── */
+.badge {
+  display:inline-flex; align-items:center;
+  padding:4px 10px; border-radius:100px;
+  font-size:11px; font-weight:700; white-space:nowrap; flex-shrink:0;
+}
+.badge-pending  { background:#FEF9C3; color:#A16207; }
+.badge-approved { background:var(--green-dim); color:var(--green-dark); }
+.badge-blocked  { background:#FEE2E2; color:#B91C1C; }
+.badge-rejected { background:var(--border-soft); color:#374151; }
+
+/* ── Delete button ── */
+.btn-delete-store {
+  display:inline-flex; align-items:center; gap:5px;
+  margin-top:12px; padding:6px 12px;
+  border:1px solid var(--border); border-radius:7px;
+  background:transparent; color:var(--text-3);
+  font-size:11.5px; font-weight:600; font-family:inherit; cursor:pointer; transition:all .15s;
+}
+.btn-delete-store:hover { border-color:#FECACA; color:var(--red); background:#FFF5F5; }
+.btn-delete-store svg { width:11px; height:11px; }
+
+.empty { text-align:center; padding:40px 20px; color:var(--text-3); font-size:13px; }
+
+/* ── Toast ── */
+#toast {
+  position:fixed; bottom:28px; left:50%;
+  transform:translateX(-50%) translateY(60px);
+  background:var(--text); color:#fff;
+  padding:11px 22px; border-radius:9px;
+  font-size:13px; font-weight:600;
+  box-shadow:0 6px 28px rgba(0,0,0,.16);
+  transition:transform .3s cubic-bezier(.22,1,.36,1), opacity .3s;
+  opacity:0; z-index:500; white-space:nowrap;
+}
+#toast.show { transform:translateX(-50%) translateY(0); opacity:1; }
+
+/* ── Bottom Nav (mobile) ── */
+.bottom-nav { display:none; }
+
+@media (max-width:640px) {
+  .nav { padding:0 14px; }
+  .nav-links { display:none; }
+  .main { padding:28px 16px 0; padding-bottom:calc(68px + env(safe-area-inset-bottom,0px)); }
+  .user-name { display:none; }
+  .page-title { font-size:26px; }
+  .row-2 { grid-template-columns:1fr; }
+  .form-card { padding:20px; margin-bottom:32px; }
+  .store-card { padding:16px 18px; }
+  #toast { bottom:calc(68px + env(safe-area-inset-bottom,0px) + 12px); }
+
+  .bottom-nav {
+    display:flex; position:fixed; bottom:0; left:0; right:0;
+    background:var(--card); border-top:1px solid var(--border);
+    z-index:100; padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  .bottom-nav-link {
+    flex:1; display:flex; flex-direction:column;
+    align-items:center; justify-content:center;
+    padding:10px 0; gap:2px;
+    text-decoration:none; color:var(--text-3);
+    font-size:11px; font-weight:600; letter-spacing:.2px;
+    transition:color .15s;
+  }
+  .bottom-nav-link:hover { color:var(--text-2); }
+  .bottom-nav-link.active { color:var(--gold); }
+  .bottom-nav-dot {
+    width:4px; height:4px; border-radius:50%;
+    background:currentColor; opacity:0;
+    transition:opacity .15s;
+  }
+  .bottom-nav-link.active .bottom-nav-dot { opacity:1; }
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a class="nav-brand" href="下單.html">
+    <div class="nav-brand-mark"></div>
+    <span class="nav-brand-text">翔躍企業社</span>
+  </a>
+  <div class="nav-links">
+    <a href="下單.html"     class="nav-link">訂貨叫貨</a>
+    <a href="我的訂單.html" class="nav-link">我的訂單</a>
+    <a href="我的店面.html"  class="nav-link active">我的店面</a>
+  </div>
+  <div class="nav-right">
+    <div class="user-pill">
+      <div class="user-avatar"><span id="userAvatar"></span></div>
+      <span class="user-name" id="userName"></span>
+    </div>
+    <button class="btn-logout" onclick="logout()">登出</button>
+  </div>
+</nav>
+
+<main class="main">
+
+  <div class="page-eyebrow">翔躍企業社</div>
+  <div class="page-title">我的店面</div>
+  <div class="page-sub">申請開設店面，審核通過後即可開始下單</div>
+
+  <div class="sec-label">申請新店面</div>
+
+  <div class="notice-strip">
+    申請後由管理員進行審核，審核結果將更新於下方店面狀態。申請時間約需 1～3 個工作天。
+  </div>
+
+  <div class="form-card">
+    <form id="storeForm" onsubmit="applyStore(event)">
+      <div class="form-group">
+        <label class="form-label" for="storeName">店面名稱 <span class="req">*</span></label>
+        <input class="form-control" type="text" id="storeName" placeholder="請輸入店面名稱" required>
+      </div>
+      <div class="row-2">
+        <div class="form-group">
+          <label class="form-label" for="storeCity">縣市 <span class="req">*</span></label>
+          <select class="form-control" id="storeCity" required>
+            <option value="">— 請選擇縣市 —</option>
+            <option>台北市</option><option>新北市</option><option>桃園市</option>
+            <option>台中市</option><option>台南市</option><option>高雄市</option>
+            <option>基隆市</option><option>新竹市</option><option>嘉義市</option>
+            <option>新竹縣</option><option>苗栗縣</option><option>彰化縣</option>
+            <option>南投縣</option><option>雲林縣</option><option>嘉義縣</option>
+            <option>屏東縣</option><option>宜蘭縣</option><option>花蓮縣</option>
+            <option>台東縣</option><option>澎湖縣</option><option>金門縣</option>
+            <option>連江縣</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="storeDistrict">鄉鎮市區 <span class="req">*</span></label>
+          <input class="form-control" type="text" id="storeDistrict" placeholder="例：三重區" required>
+        </div>
+      </div>
+      <div class="row-2">
+        <div class="form-group">
+          <label class="form-label" for="storePhone">聯絡電話 <span class="req">*</span></label>
+          <input class="form-control" type="text" id="storePhone" placeholder="例：02-12345678" required>
+        </div>
+        <div></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="storeAddress">完整地址 <span class="req">*</span></label>
+        <input class="form-control" type="text" id="storeAddress" placeholder="請輸入完整地址" required>
+      </div>
+      <button type="submit" class="btn-submit">送出申請</button>
+    </form>
+  </div>
+
+  <div class="sec-label">我的店面</div>
+  <div class="store-grid" id="storeGrid"></div>
+
+</main>
+
+<div id="toast"></div>
+
+<nav class="bottom-nav">
+  <a href="下單.html"     class="bottom-nav-link"><div class="bottom-nav-dot"></div>訂貨叫貨</a>
+  <a href="我的訂單.html" class="bottom-nav-link"><div class="bottom-nav-dot"></div>我的訂單</a>
+  <a href="我的店面.html"  class="bottom-nav-link active"><div class="bottom-nav-dot"></div>我的店面</a>
+</nav>
+
+<script>
+const firebaseConfig = {
+  apiKey:            "AIzaSyDOl7Kq_mZZPdCPkSb_oRPBlxh37sZG5ls",
+  authDomain:        "xiangyue-order.firebaseapp.com",
+  projectId:         "xiangyue-order",
+  storageBucket:     "xiangyue-order.firebasestorage.app",
+  messagingSenderId: "89673554795",
+  appId:             "1:89673554795:web:e101e39be2d99349a84a2e"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+const user = JSON.parse(localStorage.getItem('currentUser') || 'null');
+if (!user || localStorage.getItem('isLoggedIn') !== 'true') window.location.href = 'index.html';
+
+document.getElementById('userAvatar').textContent = user.avatar;
+document.getElementById('userName').textContent   = user.name;
+
+const STATUS_MAP = {
+  pending:  { label:'審核中', cls:'badge-pending' },
+  approved: { label:'已通過', cls:'badge-approved' },
+  blocked:  { label:'已封鎖', cls:'badge-blocked' },
+  rejected: { label:'已拒絕', cls:'badge-rejected' },
+};
+
+function renderStores(docs) {
+  const grid = document.getElementById('storeGrid');
+  if (docs.length === 0) {
+    grid.innerHTML = `<div class="empty">尚無申請記錄，填寫上方表單送出申請</div>`;
+    return;
+  }
+  grid.innerHTML = docs.map(s => {
+    const st = STATUS_MAP[s.status] || STATUS_MAP.pending;
+    const safeName = s.name.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+    return `
+      <div class="store-card">
+        <div class="store-header">
+          <div class="store-name">${s.name}</div>
+          <span class="badge ${st.cls}">${st.label}</span>
+        </div>
+        <div class="store-info">
+          <div class="store-row"><span class="store-lbl">縣市</span><span>${s.city||''}</span></div>
+          <div class="store-row"><span class="store-lbl">地區</span><span>${s.district||''}</span></div>
+          <div class="store-row"><span class="store-lbl">地址</span><span>${s.address||''}</span></div>
+          <div class="store-row"><span class="store-lbl">電話</span><span>${s.phone||''}</span></div>
+          <div class="store-row"><span class="store-lbl">申請</span><span>${s.appliedAt||''}</span></div>
+        </div>
+        <button class="btn-delete-store" onclick="deleteStore('${s.id}','${safeName}','${s.status}')">
+          <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="2,3.5 12,3.5"/><path d="M5.5 3.5V2.5h3V3.5"/>
+            <rect x="3" y="3.5" width="8" height="8.5" rx="1.5"/>
+            <line x1="5.5" y1="6" x2="5.5" y2="9.5"/><line x1="8.5" y1="6" x2="8.5" y2="9.5"/>
+          </svg>
+          ${ s.status === 'pending' ? '取消申請' : '刪除店面' }
+        </button>
+      </div>`;
+  }).join('');
+}
+
+db.collection('stores')
+  .where('ownerId', '==', user.id)
+  .orderBy('appliedAt', 'desc')
+  .onSnapshot(snap => {
+    const docs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    renderStores(docs);
+  }, err => console.error('stores listener error', err));
+
+async function applyStore(e) {
+  e.preventDefault();
+  const id    = 'S' + String(Date.now()).slice(-8);
+  const today = new Date().toISOString().slice(0, 10);
+  const data  = {
+    id, ownerId: user.id, ownerName: user.name,
+    name:     document.getElementById('storeName').value.trim(),
+    city:     document.getElementById('storeCity').value,
+    district: document.getElementById('storeDistrict').value.trim(),
+    address:  document.getElementById('storeAddress').value.trim(),
+    phone:    document.getElementById('storePhone').value.trim(),
+    status: 'pending', appliedAt: today,
+  };
+  try {
+    await db.collection('stores').doc(id).set(data);
+    document.getElementById('storeForm').reset();
+    showToast('店面申請已送出，待管理員審核');
+  } catch(err) {
+    showToast('送出失敗，請稍後再試');
+    console.error(err);
+  }
+}
+
+async function deleteStore(storeId, storeName, status) {
+  const msg = status === 'pending'
+    ? `確定要取消「${storeName}」的申請嗎？`
+    : `確定要刪除「${storeName}」嗎？\n刪除後無法復原。`;
+  if (!confirm(msg)) return;
+  try {
+    await db.collection('stores').doc(storeId).delete();
+    showToast(status === 'pending' ? '已取消申請' : '店面已刪除');
+  } catch(err) {
+    showToast('操作失敗，請稍後再試');
+    console.error(err);
+  }
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3500);
+}
+
+function logout() {
+  if (!confirm('確定要登出嗎？')) return;
+  localStorage.removeItem('isLoggedIn');
+  localStorage.removeItem('currentUser');
+
+  window.location.href = 'index.html';
+}
+</script>
+</body>
+</html>
