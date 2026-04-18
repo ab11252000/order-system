@@ -198,7 +198,7 @@
 
   try { var all = JSON.parse(localStorage.getItem('xy_products')||'{}'); renderProds(all[CAT]); } catch(e){ renderProds(null); }
 
-  var binId = localStorage.getItem('xy_productsBinId') || '69e3492eaaba88219710c409';
+  var binId = localStorage.getItem('xy_productsBinId') || '69e36547856a68218948f266';
   if (binId) {
     fetch('https://api.jsonbin.io/v3/b/' + binId + '/latest')
       .then(function(r){ return r.json(); })
