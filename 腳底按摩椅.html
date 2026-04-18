@@ -9,6 +9,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700&family=Noto+Sans+TC:wght@300;400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="./style.css">
     <link rel="stylesheet" href="./index.css">
+    <style>
+      #樣品 .product-card { display:flex; flex-direction:column; }
+      #樣品 .product-info { display:flex; flex-direction:column; flex:1; }
+      #樣品 .product-info p { flex:1; }
+    </style>
 </head>
 <body>
 
@@ -69,7 +74,6 @@
     </button>
 </header>
 
-<!-- PAGE HERO -->
 <section class="page-hero">
     <div class="page-hero-content">
         <h1>腳底按摩椅</h1>
@@ -78,13 +82,64 @@
     </div>
 </section>
 
-<!-- 樣品展示（留空，自行填入）-->
-<section id="樣品"></section>
+<!-- ── 樣品展示 ── -->
+<section id="樣品">
+  <div class="section-wrap">
+    <div class="section-header">
+      <span class="section-tag">PRODUCT SHOWCASE</span>
+      <h2 class="section-title">樣品展示</h2>
+      <div class="section-divider"></div>
+    </div>
 
-<!-- 換皮維修（留空，自行填入）-->
-<section id="換皮"></section>
+    <div id="sampleGrid" class="products-grid"></div>
+  </div>
+</section>
 
-<!-- CTA -->
+<!-- ── 換皮維修 ── -->
+<section id="換皮" style="background:#241E16; position:relative; overflow:hidden;">
+  <div style="position:absolute;inset:0;background-image:url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='0.5' y='0.5' width='59' height='59' fill='none' stroke='%23b09a6a' stroke-opacity='0.055' stroke-width='0.4'/%3E%3C/svg%3E\");background-size:60px 60px;pointer-events:none;"></div>
+  <div class="section-wrap" style="position:relative;z-index:1;">
+    <div class="section-header">
+      <span class="section-tag" style="color:rgba(196,165,90,0.55);">REPAIR &amp; RESTORE</span>
+      <h2 class="section-title light">換皮維修服務</h2>
+      <div class="section-divider" style="background:rgba(196,165,90,0.45);"></div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:24px;margin-bottom:52px;">
+
+      <div style="background:rgba(255,250,240,0.04);border:1px solid rgba(196,165,90,0.18);padding:32px 28px;transition:background .3s,border-color .3s;" onmouseover="this.style.background='rgba(255,250,240,0.08)';this.style.borderColor='rgba(196,165,90,0.50)'" onmouseout="this.style.background='rgba(255,250,240,0.04)';this.style.borderColor='rgba(196,165,90,0.18)'">
+        <div style="font-size:1.6rem;margin-bottom:16px;opacity:.8;">🪡</div>
+        <h3 style="font-family:'Noto Serif TC',serif;font-size:1rem;color:rgba(245,238,220,.88);letter-spacing:2px;margin-bottom:12px;">皮料更換</h3>
+        <p style="font-size:0.82rem;color:rgba(220,208,180,.45);line-height:1.85;">多種皮料顏色與材質可選，包含仿皮、真皮、高耐磨商業皮，依場所風格客製搭配。</p>
+      </div>
+
+      <div style="background:rgba(255,250,240,0.04);border:1px solid rgba(196,165,90,0.18);padding:32px 28px;transition:background .3s,border-color .3s;" onmouseover="this.style.background='rgba(255,250,240,0.08)';this.style.borderColor='rgba(196,165,90,0.50)'" onmouseout="this.style.background='rgba(255,250,240,0.04)';this.style.borderColor='rgba(196,165,90,0.18)'">
+        <div style="font-size:1.6rem;margin-bottom:16px;opacity:.8;">🔧</div>
+        <h3 style="font-family:'Noto Serif TC',serif;font-size:1rem;color:rgba(245,238,220,.88);letter-spacing:2px;margin-bottom:12px;">結構修復</h3>
+        <p style="font-size:0.82rem;color:rgba(220,208,180,.45);line-height:1.85;">椅架焊接補強、鬆動關節鎖固、底座穩定性修復，延長椅體使用年限，恢復原廠坐感。</p>
+      </div>
+
+      <div style="background:rgba(255,250,240,0.04);border:1px solid rgba(196,165,90,0.18);padding:32px 28px;transition:background .3s,border-color .3s;" onmouseover="this.style.background='rgba(255,250,240,0.08)';this.style.borderColor='rgba(196,165,90,0.50)'" onmouseout="this.style.background='rgba(255,250,240,0.04)';this.style.borderColor='rgba(196,165,90,0.18)'">
+        <div style="font-size:1.6rem;margin-bottom:16px;opacity:.8;">🛋️</div>
+        <h3 style="font-family:'Noto Serif TC',serif;font-size:1rem;color:rgba(245,238,220,.88);letter-spacing:2px;margin-bottom:12px;">海綿替換</h3>
+        <p style="font-size:0.82rem;color:rgba(220,208,180,.45);line-height:1.85;">坐墊、靠背海綿老化更換，依需求選用不同硬度，重新找回柔軟支撐，提升顧客舒適體驗。</p>
+      </div>
+
+      <div style="background:rgba(255,250,240,0.04);border:1px solid rgba(196,165,90,0.18);padding:32px 28px;transition:background .3s,border-color .3s;" onmouseover="this.style.background='rgba(255,250,240,0.08)';this.style.borderColor='rgba(196,165,90,0.50)'" onmouseout="this.style.background='rgba(255,250,240,0.04)';this.style.borderColor='rgba(196,165,90,0.18)'">
+        <div style="font-size:1.6rem;margin-bottom:16px;opacity:.8;">📦</div>
+        <h3 style="font-family:'Noto Serif TC',serif;font-size:1rem;color:rgba(245,238,220,.88);letter-spacing:2px;margin-bottom:12px;">到府收送</h3>
+        <p style="font-size:0.82rem;color:rgba(220,208,180,.45);line-height:1.85;">提供到府收件與完工送回服務，無需自行搬運，全程由專業人員處理，安心方便。</p>
+      </div>
+
+    </div>
+
+    <div style="text-align:center;border-top:1px solid rgba(196,165,90,0.14);padding-top:40px;">
+      <p style="font-family:'Noto Serif TC',serif;font-size:0.92rem;color:rgba(220,208,180,.48);letter-spacing:3px;margin-bottom:28px;">舊椅翻新，省下重購成本 · 歡迎來電洽詢報價</p>
+      <a href="./聯絡我們.html" class="btn-gold">立即洽詢維修</a>
+    </div>
+  </div>
+</section>
+
 <div class="cta-section">
     <h2>需要訂製或維修服務？</h2>
     <p>歡迎來電或留言，我們會儘快為您安排報價</p>
@@ -129,6 +184,50 @@
             document.querySelectorAll('.submenu').forEach(function(s){ s.classList.remove('is-open'); });
         }
     });
+})();
+
+// ── 動態載入商品（雲端優先，fallback localStorage）────────────
+(function(){
+  var CAT = '腳底按摩椅';
+  var DEFAULT = [
+    { id:'d1', name:'標準款腳底按摩椅', price:'歡迎詢價', desc:'經典座椅結構，適合一般養生館與個人工作室使用，舒適耐用，坐感穩固，皮料可依需求客製選色。', img:'./img/腳底按摩椅.png' },
+    { id:'d2', name:'豪華款腳底按摩椅', price:'歡迎詢價', desc:'加寬加厚坐墊設計，提供更佳的包覆感與久坐舒適性，適合高端會館或注重質感的場所選用。',   img:'./img/腳底按摩椅2.jpg' },
+    { id:'d3', name:'商業款腳底按摩椅', price:'歡迎詢價', desc:'採用高耐磨商業級皮料，專為高使用頻率場所設計，結構加強抗壓，維護簡便，適合大型養生館連鎖採購。', img:'./img/腳底按摩椅3.jpg' },
+  ];
+
+  function renderProds(prods) {
+    var grid = document.getElementById('sampleGrid');
+    if (!grid) return;
+    var list = (prods && prods.length) ? prods : DEFAULT;
+    grid.innerHTML = list.map(function(p){
+      return '<div class="product-card">' +
+        '<div class="product-img">' + (p.img ? '<img src="' + p.img + '" alt="' + p.name + '" loading="lazy">' : '') + '</div>' +
+        '<div class="product-info">' +
+          '<h3>' + p.name + '</h3>' +
+          (p.desc ? '<p>' + p.desc + '</p>' : '') +
+          '<div class="product-footer">' +
+            '<div><div class="price-main">' + (p.price||'歡迎詢價') + '</div></div>' +
+            '<a href="./聯絡我們.html" class="inquiry-btn">馬上購買</a>' +
+          '</div>' +
+        '</div></div>';
+    }).join('');
+  }
+
+  // 先從 localStorage 快取立即顯示
+  try { var all = JSON.parse(localStorage.getItem('xy_products')||'{}'); renderProds(all[CAT]); } catch(e){ renderProds(null); }
+
+  // 背景從 JSONBin 拉最新
+  var binId = localStorage.getItem('xy_productsBinId') || '69e3492eaaba88219710c409';
+  if (binId) {
+    fetch('https://api.jsonbin.io/v3/b/' + binId + '/latest')
+      .then(function(r){ return r.json(); })
+      .then(function(d){
+        if (d.record && d.record[CAT]) {
+          localStorage.setItem('xy_products', JSON.stringify(d.record));
+          renderProds(d.record[CAT]);
+        }
+      }).catch(function(){});
+  }
 })();
 </script>
 
