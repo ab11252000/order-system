@@ -2162,29 +2162,169 @@
     .footer-copy { font-size: 0.62rem; }
 }
 
-@media (max-width: 360px) {
+/* S23 優化 (360-393px) */
+@media (max-width: 393px) {
+    /* Header */
+    .header {
+        padding: 8px 12px;
+        min-height: 64px;
+    }
+    .logo-area { gap: 8px; }
+    .logo-emblem { width: 36px; height: 36px; }
+    .logo-brand-zh { font-size: 1.1rem; letter-spacing: 0.06em; }
+    .logo-brand-en { font-size: 0.48rem; letter-spacing: 0.12em; margin-top: 2px; }
+    .menu-toggle { width: 40px; height: 40px; }
+
+    /* Hero */
+    .site-hero { padding-top: clamp(70px, 10vh, 90px); }
     .hero-product-line,
     .hero-brand-line {
-        font-size: 0.70rem !important;
+        font-size: 0.72rem !important;
+        letter-spacing: 1.5px !important;
+    }
+    .btn-enter-site {
+        margin-top: 20px;
+        font-size: 0.58rem;
+        letter-spacing: 2.5px;
+        padding: 12px 18px 12px 22px;
+        gap: 10px;
+        outline-offset: 3px;
+    }
+    .enter-arrow { width: 28px; height: 28px; }
+
+    /* Features */
+    .hero-features .feature-item {
+        padding: 14px 10px;
+    }
+    .feature-item h4 { font-size: 0.76rem; letter-spacing: 1px; }
+    .feature-item p { font-size: 0.62rem; }
+    .fi-icon { font-size: 0.6rem; margin-bottom: 6px; }
+
+    /* Showcase */
+    .showcase-left { height: 240px; }
+    .showcase-slide img { height: 60%; max-width: 88%; }
+    .sc-counter { top: 8px; right: 8px; padding: 4px 7px 3px 9px; }
+    .sc-cur { font-size: 0.95rem; }
+    .sc-total { font-size: 0.52rem; }
+    .sc-dots { bottom: 14px; gap: 6px; }
+    .sc-dot { width: 5px; height: 5px; }
+    .sc-dot--active { width: 22px; }
+
+    /* Bulletin */
+    .bulletin-board { padding: 16px 14px 14px; }
+    .bulletin-header { margin-bottom: 10px; padding-bottom: 8px; }
+    .bulletin-title { font-size: 0.78rem; letter-spacing: 2px; }
+    .bulletin-en { display: none; }
+    .bulletin-item { padding: 8px 0; gap: 4px 6px; }
+    .bulletin-text { font-size: 0.72rem; line-height: 1.55; }
+    .bulletin-date { font-size: 0.52rem; }
+    .bulletin-badge { font-size: 0.50rem; padding: 2px 5px; }
+    .bulletin-cta { font-size: 0.68rem; }
+    .bulletin-footer { padding-top: 10px; margin-top: 4px; }
+
+    /* Ticker */
+    .ticker-bar { height: 36px; }
+    .ticker-label { font-size: 0.56rem; padding: 0 10px; letter-spacing: 1.5px; }
+    .ticker-label::after { right: -7px; border-left-width: 7px; border-top-width: 18px; border-bottom-width: 18px; }
+    .ticker-track span { font-size: 0.68rem; padding: 0 28px; }
+
+    /* Category Cards */
+    .cat-card { padding: 26px 14px 22px; }
+    .cat-card h3 { font-size: 0.95rem; letter-spacing: 2px; }
+    .cat-card p { font-size: 0.72rem; line-height: 1.8; }
+    .cat-en { font-size: 0.54rem; letter-spacing: 2.5px; margin-bottom: 14px; }
+    .cat-card .arrow { font-size: 0.70rem; margin-top: 16px; }
+
+    /* Scroll Invite */
+    .scroll-invite { padding: 16px 14px 20px; }
+    .si-label { gap: 6px; }
+    .si-diamond { font-size: 0.32rem; }
+    .si-en { font-size: 0.50rem; letter-spacing: 2px; }
+    .si-sub { font-size: 0.64rem; letter-spacing: 1.8px; margin-top: 6px; }
+    .si-arrow-btn { margin-top: 12px; }
+    .si-caret { width: 20px; height: 10px; }
+
+    /* Gallery Hero */
+    .gallery-hero { height: calc(100svh - 130px); min-height: 300px; }
+    .gallery-hero .slide img { max-width: 92%; max-height: calc(100% - 80px); }
+    .gallery-hero .slider-counter { top: 8px; right: 10px; padding: 5px 9px 4px 11px; }
+    .gallery-hero .counter-current { font-size: 1.3rem; }
+    .gallery-hero .counter-total { font-size: 0.65rem; }
+    .gallery-hero .slide-info { padding: 8px 14px 48px; }
+    .gallery-hero .slide-label { font-size: 0.52rem; letter-spacing: 3px; }
+    .gallery-hero .slide-desc { font-size: 0.84rem; letter-spacing: 1.5px; }
+    .gallery-hero .slider-footer { height: 42px; padding: 0 14px; }
+    .gallery-hero .slider-dots { gap: 8px; }
+    .gallery-hero .slider-dot { width: 5px; height: 5px; }
+    .gallery-hero .slider-dot.is-active { width: 26px; }
+
+    /* Notice Section */
+    .notice-card { padding: 28px 20px 24px; }
+    .notice-card h3 { font-size: 0.95rem; letter-spacing: 1.5px; }
+    .notice-card p { font-size: 0.76rem; line-height: 1.8; }
+    .notice-date { font-size: 0.58rem; letter-spacing: 2px; }
+    .notice-badge { font-size: 0.60rem; padding: 3px 10px; }
+
+    /* Section Headers */
+    .section-wrap { padding: 44px 14px; }
+    .section-title { font-size: 1.25rem; letter-spacing: 2.5px; }
+    .section-tag { font-size: 0.52rem; letter-spacing: 2.5px; }
+    .section-header { margin-bottom: 36px; }
+
+    /* Lightbox */
+    .lb-stage { max-width: calc(100vw - 16px); }
+    .lb-img { max-width: 96vw; max-height: 68vh; }
+    .lb-arrow { width: 30px; height: 48px; }
+    .lb-arrow--prev { left: 2px; }
+    .lb-arrow--next { right: 2px; }
+    .lb-close { top: 8px; right: 8px; width: 38px; height: 38px; }
+    .lb-caption { font-size: 0.68rem; letter-spacing: 1.5px; }
+    .lb-counter { font-size: 0.60rem; }
+    .lb-info { flex-direction: column; gap: 4px; align-items: flex-start; padding: 0 8px; }
+
+    /* Footer */
+    .footer { padding: 36px 14px 24px; }
+    .footer-logo { font-size: 1.05rem; letter-spacing: 3px; }
+    .footer-en { font-size: 0.54rem; letter-spacing: 2px; }
+    .footer p { font-size: 0.66rem; }
+    .footer-copy { font-size: 0.58rem; }
+}
+
+@media (max-width: 360px) {
+    .header { padding: 6px 10px; min-height: 58px; }
+    .logo-emblem { width: 32px; height: 32px; }
+    .logo-brand-zh { font-size: 0.95rem; }
+    .logo-brand-en { font-size: 0.44rem; }
+
+    .hero-product-line,
+    .hero-brand-line {
+        font-size: 0.66rem !important;
         letter-spacing: 1px !important;
     }
-    .showcase-left { height: 230px; }
-    .bulletin-board { padding: 16px 14px 14px; }
-    .bulletin-text  { font-size: 0.70rem; }
+    .btn-enter-site {
+        font-size: 0.54rem;
+        padding: 10px 14px 10px 18px;
+    }
 
-    .logo-brand-zh { font-size: 1.0rem; }
-    .logo-emblem svg { width: 34px; height: 34px; }
+    .showcase-left { height: 220px; }
+    .bulletin-board { padding: 14px 12px 12px; }
+    .bulletin-text { font-size: 0.68rem; }
+    .bulletin-title { font-size: 0.74rem; }
 
-    .si-en  { display: none; }
-    .si-sub { font-size: 0.62rem; }
+    .cat-card { padding: 22px 12px 18px; }
+    .cat-card h3 { font-size: 0.88rem; }
+    .cat-en { letter-spacing: 2px; font-size: 0.50rem; }
 
-    .cat-card { padding: 24px 14px 20px; }
-    .cat-card h3 { font-size: 0.92rem; }
-    .cat-en { letter-spacing: 2px; }
+    .si-en { display: none; }
+    .si-sub { font-size: 0.58rem; }
+    .si-rule { display: none; }
 
+    .gallery-hero .slide-desc { font-size: 0.78rem; }
+    .gallery-hero .counter-current { font-size: 1.2rem; }
 
-    .lb-info { flex-direction: column; gap: 4px; align-items: flex-start; }
-    .lb-img  { max-width: 96vw; }
+    .section-title { font-size: 1.15rem; letter-spacing: 2px; }
+    .feature-item h4 { font-size: 0.72rem; }
+    .feature-item p { font-size: 0.58rem; }
 }
 
 @media (hover: none) {

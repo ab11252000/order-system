@@ -1187,3 +1187,133 @@ body {
     .product-card .card-title { font-size: 0.88rem; }
     .product-card .card-img-wrap { height: 180px; }
 }
+
+/* S23 優化 (360-393px) */
+@media (max-width: 393px) {
+    .header { padding: 10px 12px; }
+    .logo-brand-zh { font-size: 1.2rem; letter-spacing: 3px; }
+    .logo-brand-en { font-size: 0.50rem; letter-spacing: 2px; margin-top: 4px; }
+    .logo-emblem svg { width: 42px; height: 42px; }
+
+    .site-hero { padding: 90px 16px 70px; min-height: 100svh; }
+    .hero-watermark { font-size: clamp(140px, 45vw, 220px); right: -8%; opacity: 0.8; }
+
+    .hero-display-title { letter-spacing: 0.18em; }
+    .hero-brand-text { padding: 10px 22px 8px; margin-top: 14px; margin-bottom: 18px; }
+    .brand-label { font-size: 0.50rem; letter-spacing: 3px; }
+    .brand-zh { font-size: 1.5rem; letter-spacing: 4px; }
+    .brand-en { font-size: 0.92rem; }
+
+    .hero-orn { gap: 10px; margin-bottom: 18px; }
+    .orn-line { width: 50px; }
+    .orn-diamond { font-size: 0.38rem; }
+
+    .hero-product-line { font-size: 0.78rem; letter-spacing: 2px; margin-bottom: 10px; }
+    .hero-brand-line { font-size: 0.78rem; letter-spacing: 2px; margin-bottom: 10px; }
+    .hero-tagline { font-size: 0.80rem; letter-spacing: 1.5px; margin-bottom: 24px; }
+
+    .hero-cta-row { gap: 10px; }
+    .btn-site-outline, .btn-site-gold { padding: 10px 22px; font-size: 0.70rem; letter-spacing: 1.5px; }
+
+    .hero-scroll { bottom: 20px; }
+    .scroll-label { font-size: 0.60rem; letter-spacing: 2px; }
+    .scroll-chevron { width: 11px; height: 11px; }
+
+    .page-hero { padding: 44px 16px 30px; }
+    .page-hero h1 { font-size: 1.2rem; letter-spacing: 2.5px; margin-bottom: 12px; }
+    .page-hero-tag { font-size: 0.88rem; letter-spacing: 1.5px; padding: 3px 12px; }
+    .page-hero p { font-size: 0.72rem; letter-spacing: 1.5px; }
+    .page-hero-divider { width: 32px; margin-bottom: 12px; }
+
+    .section-wrap { padding: 40px 14px; }
+    .section-header { margin-bottom: 36px; }
+    .section-title { font-size: 1.3rem; letter-spacing: 2.5px; margin-bottom: 14px; }
+    .section-tag { font-size: 0.58rem; letter-spacing: 3px; margin-bottom: 8px; }
+    .section-divider { width: 36px; }
+
+    .products-grid { gap: 14px; }
+    .product-info { padding: 16px 14px 20px; }
+    .product-info h3 { font-size: 0.92rem; margin-bottom: 6px; }
+    .product-info p { font-size: 0.76rem; margin-bottom: 14px; line-height: 1.7; }
+    .product-footer { gap: 10px; }
+    .price-main { font-size: 0.95rem; }
+    .price-sub { font-size: 0.64rem; }
+    .inquiry-btn { padding: 6px 12px; font-size: 0.70rem; }
+    .product-badge { font-size: 0.60rem; padding: 3px 10px; top: 10px; left: 10px; }
+
+    .tab-btns { margin-bottom: 32px; }
+    .tab-btn { padding: 8px 14px; font-size: 0.72rem; letter-spacing: 1.5px; }
+
+    .materials-grid { gap: 14px; }
+    .mat-img { height: 160px; }
+    .mat-info { padding: 14px 14px 18px; }
+    .mat-info h3 { font-size: 0.88rem; }
+    .mat-info p { font-size: 0.74rem; margin-bottom: 10px; }
+    .mat-price { font-size: 0.92rem; }
+    .mat-price .unit { font-size: 0.64rem; }
+
+    .slider-outer { padding-bottom: 50px; }
+    .slider-counter { right: 14px; gap: 6px; }
+    .counter-current { font-size: 1.6rem; }
+    .counter-sep { width: 24px; }
+    .counter-total { font-size: 0.80rem; }
+    .slide { min-height: 280px; }
+    .slide img { max-width: 92%; max-height: 52vw; }
+    .slide-info { padding: 16px 16px; }
+    .slide-label { font-size: 0.52rem; letter-spacing: 3px; margin-bottom: 5px; }
+    .slide-desc { font-size: 0.82rem; letter-spacing: 1.5px; }
+    .slider-arrow { width: 34px; height: 34px; }
+    .slider-arrow svg { width: 16px; height: 16px; }
+    .arrow-prev { left: 6px; }
+    .arrow-next { right: 6px; }
+    .slider-footer { gap: 10px; margin-top: 20px; }
+    .slider-dots { gap: 8px; }
+    .slider-dot { width: 6px; height: 6px; }
+    .slider-dot.is-active { width: 18px; }
+    .slider-progress { width: 80px; }
+
+    .cta-section { padding: 40px 16px; }
+    .cta-section h2 { font-size: 1.1rem; letter-spacing: 2px; margin-bottom: 10px; }
+    .cta-section p { font-size: 0.78rem; margin-bottom: 24px; }
+    .btn-gold { padding: 12px 32px; font-size: 0.78rem; letter-spacing: 1.5px; }
+
+    .footer { padding: 40px 14px 30px; }
+    .footer-logo { font-size: 1.25rem; letter-spacing: 4px; }
+    .footer-en { font-size: 0.60rem; letter-spacing: 2.5px; margin-bottom: 16px; }
+    .footer-divider { margin-bottom: 16px; }
+    .footer p { font-size: 0.70rem; }
+    .footer-copy { font-size: 0.62rem; margin-top: 14px; }
+
+    .menu1 > a { padding: 12px 16px; font-size: 0.84rem; }
+    .submenu li a { padding: 10px 32px; font-size: 0.78rem; }
+}
+
+@media (max-width: 360px) {
+    .header { padding: 8px 10px; }
+    .logo-brand-zh { font-size: 1.05rem; letter-spacing: 2px; }
+    .logo-brand-en { font-size: 0.46rem; }
+    .logo-emblem svg { width: 36px; height: 36px; }
+
+    .site-hero { padding: 80px 14px 60px; }
+    .hero-display-title { letter-spacing: 0.14em; }
+    .brand-zh { font-size: 1.35rem; letter-spacing: 3px; }
+    .brand-en { font-size: 0.85rem; }
+
+    .hero-product-line, .hero-brand-line { font-size: 0.72rem; letter-spacing: 1.5px; }
+    .hero-tagline { font-size: 0.74rem; }
+
+    .btn-site-outline, .btn-site-gold { padding: 9px 18px; font-size: 0.66rem; }
+
+    .page-hero h1 { font-size: 1.1rem; letter-spacing: 2px; }
+    .section-title { font-size: 1.2rem; letter-spacing: 2px; }
+
+    .product-info { padding: 14px 12px 18px; }
+    .product-info h3 { font-size: 0.86rem; }
+    .product-info p { font-size: 0.72rem; }
+
+    .slide { min-height: 240px; }
+    .counter-current { font-size: 1.4rem; }
+
+    .cta-section h2 { font-size: 1.0rem; }
+    .footer-logo { font-size: 1.15rem; letter-spacing: 3px; }
+}
