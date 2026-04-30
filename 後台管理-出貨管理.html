@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>出貨管理 — 翔躍企業社後台</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+<style>
+:root {
+  --gold:        #4F46E5;
+  --gold-dark:   #4338CA;
+  --gold-mid:    #6366F1;
+  --gold-light:  #EEF2FF;
+  --gold-border: #C7D2FE;
+  --text:        #0F172A;
+  --text-2:      #334155;
+  --muted:       #64748B;
+  --border:      #E2E8F0;
+  --bg:          #F8FAFC;
+  --card:        #FFFFFF;
+  --green:       #10b981;
+  --green-dark:  #059669;
+  --green-bg:    #ecfdf5;
+  --red:         #ef4444;
+  --blue:        #2563eb;
+  --blue-bg:     #eff6ff;
+  --sidebar-w:   220px;
+  --topbar-h:    58px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Noto Sans TC',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
+
+/* ── Topbar ── */
+.topbar {
+  height:var(--topbar-h); background:var(--card); border-bottom:1px solid var(--border);
+  display:flex; align-items:center; padding:0 24px; gap:16px;
+  position:fixed; top:0; left:0; right:0; z-index:100;
+  box-shadow:0 1px 8px rgba(0,0,0,.06);
+}
+.tb-logo {
+  width:36px; height:36px; border-radius:10px; overflow:hidden; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+}
+.tb-logo img { width:36px; height:36px; object-fit:contain; display:block; }
+.tb-brand {
+  position:absolute; left:50%; transform:translateX(-50%);
+  font-size:20px; font-weight:900; color:var(--text); letter-spacing:2px;
+  pointer-events:none;
+}
+.tb-sep { flex:1; }
+.tb-badge {
+  background:var(--gold-light); border:1px solid var(--gold-border);
+  color:var(--gold); font-size:11px; font-weight:700;
+  padding:4px 12px; border-radius:100px; letter-spacing:.5px;
+}
+.tb-cloud {
+  display:flex; align-items:center; gap:7px; padding:6px 14px; border-radius:100px;
+  border:1.5px solid var(--border); font-size:12px; font-weight:600;
+  color:var(--muted); background:var(--bg); text-decoration:none;
+  transition:all .18s; white-space:nowrap;
+}
+.tb-cloud.ok  { border-color:#bbf7d0; color:var(--green); background:var(--green-bg); }
+.tb-cloud.err { border-color:#fecaca; color:var(--red);   background:#fff5f5; }
+.tb-cloud-dot { width:7px; height:7px; border-radius:50%; background:var(--muted); flex-shrink:0; }
+.tb-cloud.ok  .tb-cloud-dot { background:var(--green); box-shadow:0 0 0 3px rgba(22,163,74,.20); }
+.tb-cloud.err .tb-cloud-dot { background:var(--red);   box-shadow:0 0 0 3px rgba(220,38,38,.20); }
+.tb-logout {
+  padding:7px 16px; border-radius:8px; border:1.5px solid var(--border);
+  background:transparent; color:var(--muted); font-size:12px; font-weight:600;
+  font-family:inherit; cursor:pointer; transition:all .15s;
+}
+.tb-logout:hover { border-color:#fca5a5; color:var(--red); background:#fff5f5; }
+
+/* ── Layout ── */
+.admin-body { display:flex; margin-top:var(--topbar-h); min-height:calc(100vh - var(--topbar-h)); }
+
+/* ── Sidebar ── */
+.sidebar {
+  width:var(--sidebar-w); background:#1E293B; border-right:none;
+  position:fixed; top:var(--topbar-h); left:0; bottom:0;
+  overflow-y:auto; display:flex; flex-direction:column; padding:24px 0 32px;
+}
+.sb-section-label {
+  font-size:10px; font-weight:700; color:#475569; letter-spacing:1.5px;
+  text-transform:uppercase; padding:0 20px; margin-bottom:8px;
+}
+.sb-item {
+  display:flex; align-items:center; gap:11px; padding:10px 20px;
+  font-size:13px; font-weight:600; color:#94A3B8; text-decoration:none;
+  transition:all .15s; border-left:3px solid transparent;
+}
+.sb-item:hover { background:rgba(255,255,255,.06); color:#CBD5E1; }
+.sb-item.active { background:rgba(79,70,229,.18); color:#A5B4FC; border-left-color:var(--gold); font-weight:700; }
+.sb-icon { width:18px; height:18px; opacity:.5; flex-shrink:0; }
+.sb-item.active .sb-icon, .sb-item:hover .sb-icon { opacity:1; }
+.sb-divider { height:1px; background:rgba(255,255,255,.08); margin:12px 20px; }
+
+/* ── Main ── */
+.main-area { margin-left:var(--sidebar-w); flex:1; padding:36px 40px 80px; min-width:0; max-width:980px; }
+.area-title { font-size:22px; font-weight:900; letter-spacing:-.3px; margin-bottom:3px; }
+.area-sub   { font-size:13px; color:var(--muted); margin-bottom:32px; }
+
+/* ── Section Card ── */
+.sec-card {
+  background:var(--card); border-radius:18px; border:1px solid var(--border);
+  box-shadow:0 1px 4px rgba(0,0,0,.04), 0 6px 20px rgba(0,0,0,.05);
+  overflow:hidden; margin-bottom:28px;
+}
+.sec-head {
+  padding:16px 24px; border-bottom:1px solid var(--border); background:var(--bg);
+  display:flex; align-items:center; justify-content:space-between; gap:12px;
+}
+.sec-title { font-size:15px; font-weight:800; color:var(--text); }
+.sec-tools { display:flex; align-items:center; gap:8px; }
+.sec-body  { padding:20px 24px; }
+
+/* ── Buttons ── */
+.btn {
+  padding:7px 14px; border-radius:9px; font-size:12px; font-weight:700;
+  font-family:inherit; cursor:pointer; transition:all .15s; border:none; white-space:nowrap;
+}
+.btn-refresh {
+  background:transparent; color:var(--muted); border:1.5px solid var(--border);
+  display:flex; align-items:center; gap:5px;
+}
+.btn-refresh:hover { border-color:var(--gold-border); color:var(--gold); background:var(--gold-light); }
+.btn-approve { background:var(--green-bg); color:var(--green); border:1.5px solid #bbf7d0; }
+.btn-approve:hover { background:#dcfce7; }
+.btn-reject  { background:#fff5f5; color:var(--red); border:1.5px solid #fecaca; }
+.btn-reject:hover  { background:#fee2e2; }
+.btn-block   { background:#fff5f5; color:var(--red); border:1.5px solid #fecaca; font-size:12px; }
+.btn-block:hover   { background:#fee2e2; }
+.btn-unblock { background:var(--green-bg); color:var(--green); border:1.5px solid #bbf7d0; }
+.btn-unblock:hover { background:#dcfce7; }
+.btn-save-code {
+  background:linear-gradient(135deg,var(--gold-mid),var(--gold-dark));
+  color:white; box-shadow:0 2px 8px rgba(200,169,74,.24);
+}
+.btn-save-code:hover { filter:brightness(1.08); }
+
+/* ── Filter tabs ── */
+.filter-tabs { display:flex; gap:4px; }
+.ftab {
+  padding:6px 14px; border-radius:8px; font-size:12px; font-weight:700;
+  font-family:inherit; cursor:pointer; border:1.5px solid var(--border);
+  background:transparent; color:var(--muted); transition:all .15s;
+}
+.ftab.active { background:var(--gold-light); color:var(--gold); border-color:var(--gold-border); }
+
+/* ── Empty state ── */
+.empty-state {
+  text-align:center; padding:32px; color:var(--muted);
+  font-size:13px;
+}
+
+/* ── Store approval rows ── */
+.store-row {
+  display:flex; align-items:center; gap:14px;
+  padding:14px 0; border-bottom:1px solid var(--border);
+}
+.store-row:last-child { border-bottom:none; }
+.store-info { flex:1; min-width:0; }
+.store-name-row { display:flex; align-items:center; gap:8px; margin-bottom:4px; }
+.store-name { font-size:14px; font-weight:800; color:var(--text); }
+.store-meta { font-size:12px; color:var(--muted); display:flex; gap:14px; flex-wrap:wrap; }
+.store-meta span { display:flex; align-items:center; gap:4px; }
+.store-actions { display:flex; gap:6px; flex-shrink:0; }
+
+
+/* ── Order groups ── */
+.city-group { margin-bottom:24px; }
+.city-label {
+  font-size:13px; font-weight:900; color:var(--text); letter-spacing:.5px;
+  padding:10px 16px; background:var(--bg); border-radius:10px;
+  border:1.5px solid var(--border); margin-bottom:10px;
+  display:flex; align-items:center; justify-content:space-between;
+}
+.city-count { font-size:12px; color:var(--muted); font-weight:600; }
+.district-group { margin-left:8px; margin-bottom:14px; }
+.district-label {
+  font-size:12px; font-weight:700; color:var(--gold-dark);
+  margin-bottom:8px; padding-left:4px; border-left:3px solid var(--gold); padding-left:10px;
+}
+.order-card {
+  background:var(--card); border-radius:12px; border:1px solid var(--border);
+  margin-bottom:10px; overflow:hidden;
+  box-shadow:0 1px 4px rgba(0,0,0,.05);
+  transition:border-color .15s, box-shadow .15s;
+}
+.order-card:hover { border-color:#c7d2fe; box-shadow:0 3px 12px rgba(79,70,229,.07); }
+
+/* top bar */
+.order-top {
+  display:flex; align-items:center; gap:10px; padding:11px 16px;
+  background:#FAFBFC; border-bottom:1px solid var(--border);
+}
+.order-code-badge {
+  font-size:11px; font-weight:800; font-family:monospace; letter-spacing:1.5px;
+  color:#1E293B; background:#E2E8F0; padding:3px 10px; border-radius:6px;
+  flex-shrink:0; cursor:text; transition:all .15s;
+  border:1.5px solid transparent; outline:none; width:auto; min-width:48px;
+  max-width:120px; text-align:center;
+}
+.order-code-badge:hover { border-color:#94a3b8; background:#f1f5f9; }
+.order-code-badge:focus { border-color:var(--gold); background:var(--gold-light); color:var(--gold-dark); }
+.order-code-badge.empty-code {
+  color:#94a3b8; background:transparent; border:1.5px dashed #cbd5e1;
+  font-family:inherit; letter-spacing:0; font-style:italic; font-weight:500;
+}
+.order-store-name { font-size:13px; font-weight:700; color:var(--text); line-height:1.3; }
+.order-address { font-size:11px; color:var(--muted); margin-top:1px; }
+.order-time { font-size:11px; color:var(--muted); margin-left:auto; white-space:nowrap; flex-shrink:0; }
+
+/* content zone */
+.order-body { display:flex; gap:0; align-items:stretch; }
+.order-content-area { flex:1; padding:14px 16px; }
+.order-content-label {
+  font-size:9.5px; font-weight:700; letter-spacing:2px; text-transform:uppercase;
+  color:var(--muted); margin-bottom:7px;
+}
+.order-content {
+  font-size:14px; font-weight:500; color:var(--text);
+  line-height:1.85; white-space:pre-wrap;
+}
+.order-note {
+  font-size:11.5px; color:var(--muted); margin-top:10px;
+  padding-top:9px; border-top:1px solid var(--border);
+}
+.order-note span { color:var(--text-2); font-weight:500; }
+.order-actions {
+  display:flex; flex-direction:column; gap:6px;
+  align-items:stretch; padding:12px; flex-shrink:0; min-width:100px;
+  border-left:1px solid var(--border); background:#FAFBFC;
+  justify-content:flex-start;
+}
+
+/* ── Status select ── */
+.status-select {
+  padding:6px 10px; border-radius:8px; font-size:12px; font-weight:700;
+  font-family:inherit; border:1.5px solid var(--border); outline:none;
+  background:var(--bg); cursor:pointer; transition:all .15s;
+  appearance:none; -webkit-appearance:none; text-align:center;
+  min-width:88px;
+}
+.status-select.pending    { border-color:#fde68a; color:#92400e; background:#fffbeb; }
+.status-select.processing { border-color:#bfdbfe; color:var(--blue); background:var(--blue-bg); }
+.status-select.completed  { border-color:#bbf7d0; color:var(--green); background:var(--green-bg); }
+.status-select.cancelled  { border-color:#e5e7eb; color:#6b7280; background:#f9fafb; }
+
+/* ── Status collapsible groups ── */
+.sg-wrap { margin-bottom:16px; border-radius:14px; overflow:hidden; border:1.5px solid var(--border); }
+.sg-head {
+  display:flex; align-items:center; gap:10px; padding:13px 18px;
+  background:var(--bg); cursor:pointer; user-select:none;
+  transition:background .15s;
+}
+.sg-head:hover { background:#f3f0ea; }
+.sg-dot { width:9px; height:9px; border-radius:50%; flex-shrink:0; }
+.sg-dot.pending    { background:#f59e0b; }
+.sg-dot.processing { background:var(--blue); }
+.sg-dot.completed  { background:var(--green); }
+.sg-dot.cancelled  { background:#9ca3af; }
+.sg-name { font-size:13px; font-weight:800; color:var(--text); }
+.sg-count { font-size:12px; color:var(--muted); font-weight:600; margin-right:auto; }
+.sg-chevron {
+  width:16px; height:16px; color:var(--muted);
+  transition:transform .25s cubic-bezier(.34,1.56,.64,1); flex-shrink:0;
+}
+.sg-chevron.open { transform:rotate(180deg); }
+.sg-body { display:none; padding:12px 16px 16px; background:var(--card); }
+.sg-body.open { display:block; }
+
+/* ── Quick complete button ── */
+.btn-complete {
+  background:var(--green-bg); color:var(--green); border:1.5px solid #bbf7d0;
+  display:flex; align-items:center; gap:5px;
+}
+.btn-complete:hover { background:#dcfce7; }
+
+/* ── Blocked users ── */
+.blocked-row {
+  display:flex; align-items:center; gap:14px;
+  padding:13px 0; border-bottom:1px solid var(--border);
+}
+.blocked-row:last-child { border-bottom:none; }
+.blocked-info { flex:1; }
+.blocked-name { font-size:13px; font-weight:700; color:var(--text); }
+.blocked-id   { font-size:12px; color:var(--muted); margin-top:2px; }
+
+/* ── Toast ── */
+#toast {
+  position:fixed; bottom:32px; left:50%; transform:translateX(-50%) translateY(80px);
+  background:#111827; color:white; padding:12px 22px; border-radius:12px;
+  font-size:13px; font-weight:600; box-shadow:0 8px 32px rgba(0,0,0,.2);
+  transition:transform .3s cubic-bezier(.16,1,.3,1), opacity .3s;
+  opacity:0; z-index:200; white-space:nowrap;
+}
+#toast.show { transform:translateX(-50%) translateY(0); opacity:1; }
+
+/* ── Collapsible sec-card ── */
+.sec-head .toggle-btn {
+  width:28px; height:28px; border-radius:8px; border:none; cursor:pointer;
+  background:transparent; color:var(--muted); display:flex; align-items:center; justify-content:center;
+  transition:background .15s, color .15s; flex-shrink:0;
+}
+.sec-head .toggle-btn:hover { background:var(--bg); color:var(--text); }
+.sec-head .toggle-btn svg { transition:transform .25s cubic-bezier(.34,1.56,.64,1); }
+.sec-head .toggle-btn.open svg { transform:rotate(180deg); }
+.sec-body.collapsed { display:none; }
+
+/* ── 公告 / 送貨區域 ── */
+.info-textarea {
+  width:100%; padding:11px 14px; border:1.5px solid var(--border); border-radius:10px;
+  font-size:13px; font-family:inherit; color:var(--text); outline:none;
+  background:#fff; resize:vertical; min-height:80px; line-height:1.7; transition:border-color .15s;
+}
+.info-textarea:focus { border-color:var(--gold); box-shadow:0 0 0 3px rgba(79,70,229,.08); }
+.info-preview {
+  margin-top:10px; padding:12px 16px; border-radius:10px; font-size:13px; line-height:1.8;
+  white-space:pre-wrap; min-height:40px;
+}
+.info-preview.announcement { background:#fffbeb; border:1.5px solid #fde68a; color:#92400e; }
+.info-preview.delivery     { background:#eff6ff; border:1.5px solid #bfdbfe; color:#1e40af; }
+.info-preview.empty        { color:var(--muted); font-style:italic; }
+.info-actions { display:flex; gap:8px; margin-top:12px; }
+.btn-info-save {
+  padding:8px 18px; border-radius:9px; font-size:12px; font-weight:700; font-family:inherit;
+  cursor:pointer; border:none; background:linear-gradient(135deg,var(--gold-mid),var(--gold-dark));
+  color:white; box-shadow:0 2px 8px rgba(79,70,229,.22); transition:filter .15s;
+}
+.btn-info-save:hover { filter:brightness(1.08); }
+.btn-info-clear {
+  padding:8px 14px; border-radius:9px; font-size:12px; font-weight:700; font-family:inherit;
+  cursor:pointer; border:1.5px solid #fecaca; background:#fff5f5; color:var(--red); transition:all .15s;
+}
+.btn-info-clear:hover { background:#fee2e2; }
+.delivery-tags { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:10px; }
+.delivery-tag {
+  display:inline-flex; align-items:center; gap:5px;
+  background:var(--blue-bg); border:1px solid #bfdbfe; color:var(--blue);
+  padding:4px 10px; border-radius:100px; font-size:12px; font-weight:600;
+}
+.delivery-tag button {
+  background:none; border:none; cursor:pointer; color:#93c5fd; font-size:14px;
+  line-height:1; padding:0; display:flex; align-items:center;
+}
+.delivery-tag button:hover { color:var(--red); }
+.delivery-add-row { display:flex; gap:8px; }
+.delivery-inp {
+  flex:1; padding:8px 12px; border:1.5px solid var(--border); border-radius:9px;
+  font-size:13px; font-family:inherit; outline:none; transition:border-color .15s;
+}
+.delivery-inp:focus { border-color:var(--blue); }
+.btn-add-tag {
+  padding:8px 16px; border-radius:9px; font-size:12px; font-weight:700; font-family:inherit;
+  cursor:pointer; border:none; background:var(--blue-bg); color:var(--blue);
+  border:1.5px solid #bfdbfe; transition:all .15s;
+}
+.btn-add-tag:hover { background:#dbeafe; }
+
+/* ── 5. 商品管理 ── */
+.prod-tabs { display:flex; gap:4px; margin-bottom:20px; flex-wrap:wrap; }
+.prod-tab {
+  padding:6px 16px; border-radius:8px; font-size:12px; font-weight:700;
+  font-family:inherit; cursor:pointer; border:1.5px solid var(--border);
+  background:transparent; color:var(--muted); transition:all .15s;
+}
+.prod-tab.active { background:var(--gold-light); color:var(--gold); border-color:var(--gold-border); }
+.prod-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
+@media(max-width:700px){ .prod-grid{ grid-template-columns:repeat(2,1fr); } }
+@media(max-width:460px){ .prod-grid{ grid-template-columns:1fr; } }
+.prod-card {
+  border:1px solid var(--border); border-radius:12px; overflow:hidden;
+  background:#fff; transition:box-shadow .2s, transform .2s;
+}
+.prod-card:hover { box-shadow:0 4px 18px rgba(0,0,0,.09); transform:translateY(-2px); }
+.prod-card-img {
+  width:100%; height:140px; background:#f1f5f9;
+  display:flex; align-items:center; justify-content:center; overflow:hidden;
+}
+.prod-card-img img { width:100%; height:100%; object-fit:cover; display:block; }
+.prod-card-no-img { font-size:11px; color:#94a3b8; letter-spacing:.5px; }
+.prod-card-body { padding:12px 14px; }
+.prod-card-name  { font-size:13px; font-weight:700; color:var(--text); margin-bottom:4px; }
+.prod-card-price { font-size:12px; font-weight:700; color:var(--gold); margin-bottom:10px; }
+.prod-card-actions { display:flex; gap:6px; }
+.btn-add-prod {
+  background:linear-gradient(135deg,var(--gold-mid),var(--gold-dark));
+  color:white; box-shadow:0 2px 8px rgba(79,70,229,.22);
+}
+.btn-add-prod:hover { filter:brightness(1.08); }
+.btn-edit-prod { background:var(--gold-light); color:var(--gold); border:1.5px solid var(--gold-border); }
+.btn-edit-prod:hover { filter:brightness(.96); }
+.btn-del-prod  { background:#fff5f5; color:var(--red); border:1.5px solid #fecaca; }
+.btn-del-prod:hover  { background:#fee2e2; }
+.prod-form-wrap {
+  background:var(--bg); border:1.5px solid var(--gold-border);
+  border-radius:14px; padding:20px; margin-bottom:20px;
+}
+.prod-form-wrap h4 { font-size:13px; font-weight:800; margin-bottom:16px; color:var(--text); }
+.prod-form-grid { display:grid; grid-template-columns:140px 1fr; gap:16px; align-items:start; }
+.prod-img-upload {
+  width:140px; height:140px; border:1.5px dashed var(--border); border-radius:10px;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  cursor:pointer; gap:6px; font-size:11px; color:var(--muted); transition:border-color .15s;
+  overflow:hidden; position:relative; background:#f8fafc; flex-shrink:0;
+}
+.prod-img-upload:hover { border-color:var(--gold); color:var(--gold); }
+.prod-img-upload img { width:100%; height:100%; object-fit:cover; position:absolute; inset:0; border-radius:9px; }
+.prod-img-upload input[type=file] { position:absolute; inset:0; opacity:0; cursor:pointer; width:100%; height:100%; }
+.prod-fields { display:flex; flex-direction:column; gap:10px; flex:1; }
+.prod-inp {
+  width:100%; padding:9px 12px; border:1.5px solid var(--border); border-radius:9px;
+  font-size:13px; font-family:inherit; color:var(--text); outline:none; background:#fff; transition:border-color .15s;
+}
+.prod-inp:focus { border-color:var(--gold); box-shadow:0 0 0 3px rgba(79,70,229,.08); }
+.prod-form-actions { display:flex; gap:8px; margin-top:4px; }
+.btn-prod-submit {
+  padding:9px 20px; border-radius:9px; font-size:12px; font-weight:700; font-family:inherit;
+  cursor:pointer; border:none; background:linear-gradient(135deg,var(--gold-mid),var(--gold-dark));
+  color:white; box-shadow:0 2px 8px rgba(79,70,229,.22); transition:filter .15s;
+}
+.btn-prod-submit:hover { filter:brightness(1.08); }
+.btn-prod-cancel {
+  padding:9px 16px; border-radius:9px; font-size:12px; font-weight:700; font-family:inherit;
+  cursor:pointer; border:1.5px solid var(--border); background:transparent; color:var(--muted); transition:all .15s;
+}
+.btn-prod-cancel:hover { border-color:#fca5a5; color:var(--red); background:#fff5f5; }
+</style>
+</head>
+<body>
+
+<!-- Topbar -->
+<div class="topbar">
+  <span class="tb-brand">後台管理</span>
+  <div class="tb-sep"></div>
+  <a class="tb-cloud" id="tbCloud" href="後台管理-進階設定.html">
+    <span class="tb-cloud-dot"></span>
+    <span id="tbCloudText">檢查中…</span>
+  </a>
+  <button class="tb-logout" onclick="doLogout()">登出</button>
+</div>
+
+<div class="admin-body">
+
+  <!-- Sidebar -->
+  <nav class="sidebar">
+    <div class="sb-section-label">內容管理</div>
+    <a class="sb-item" href="後台管理.html">
+      <svg class="sb-icon" viewBox="0 0 20 20" fill="currentColor"><path d="M2 5a2 2 0 012-2h12a2 2 0 012 2v2a2 2 0 01-2 2H4a2 2 0 01-2-2V5zM2 13a2 2 0 012-2h12a2 2 0 012 2v2a2 2 0 01-2 2H4a2 2 0 01-2-2v-2z"/></svg>
+      布告欄管理
+    </a>
+    <a class="sb-item active" href="後台管理-出貨管理.html">
+      <svg class="sb-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 2a4 4 0 00-4 4v1H5a1 1 0 00-.994.89l-1 9A1 1 0 004 18h12a1 1 0 00.994-1.11l-1-9A1 1 0 0015 7h-1V6a4 4 0 00-4-4zm2 5V6a2 2 0 10-4 0v1h4zm-6 3a1 1 0 112 0 1 1 0 01-2 0zm7-1a1 1 0 100 2 1 1 0 000-2z" clip-rule="evenodd"/></svg>
+      出貨管理
+    </a>
+    <a class="sb-item" href="後台管理-商品管理.html">
+      <svg class="sb-icon" viewBox="0 0 20 20" fill="currentColor"><path d="M4 3a2 2 0 100 4h12a2 2 0 100-4H4zM3 8h14v7a2 2 0 01-2 2H5a2 2 0 01-2-2V8zm5 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z"/></svg>
+      商品管理
+    </a>
+    <div class="sb-divider"></div>
+    <a class="sb-item" href="後台管理-進階設定.html">
+      <svg class="sb-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"/></svg>
+      進階設定
+    </a>
+  </nav>
+
+  <!-- Main -->
+  <main class="main-area">
+    <div class="area-title">出貨管理</div>
+    <div class="area-sub">店面審核、訂單處理</div>
+
+    <!-- ── 0a. 重要公告 ── -->
+    <div class="sec-card">
+      <div class="sec-head" style="cursor:pointer;" onclick="toggleSection('announcement')">
+        <span class="sec-title">重要公告</span>
+        <div class="sec-tools">
+          <span style="font-size:11px;color:var(--muted);">顯示於客戶下單頁面頂端</span>
+          <button class="toggle-btn" id="toggle-announcement" type="button">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M2 5l5 5 5-5"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+      <div class="sec-body collapsed" id="body-announcement">
+        <div id="announcementPreview" class="info-preview announcement"></div>
+        <textarea class="info-textarea" id="announcementInput" placeholder="輸入重要公告內容（留空則不顯示）" rows="3"></textarea>
+        <div class="info-actions">
+          <button class="btn-info-save" onclick="saveAnnouncement()">儲存公告</button>
+          <button class="btn-info-clear" onclick="clearAnnouncement()">清除公告</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── 0b. 今日送貨區域 ── -->
+    <div class="sec-card">
+      <div class="sec-head" style="cursor:pointer;" onclick="toggleSection('delivery')">
+        <span class="sec-title">今日送貨區域</span>
+        <div class="sec-tools">
+          <span style="font-size:11px;color:var(--muted);">顯示於客戶下單頁面頂端</span>
+          <button class="toggle-btn" id="toggle-delivery" type="button">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M2 5l5 5 5-5"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+      <div class="sec-body collapsed" id="body-delivery">
+        <div class="delivery-tags" id="deliveryTags"></div>
+        <div class="delivery-add-row">
+          <input class="delivery-inp" id="deliveryInp" placeholder="輸入地區（例：台北市、新北市）" maxlength="20"
+                 onkeydown="if(event.key==='Enter'){event.preventDefault();addDeliveryTag();}">
+          <button class="btn-add-tag" onclick="addDeliveryTag()">＋ 新增</button>
+        </div>
+        <div class="info-actions" style="margin-top:10px;">
+          <button class="btn-info-save" onclick="saveDelivery()">儲存送貨區域</button>
+          <button class="btn-info-clear" onclick="clearDelivery()">清除全部</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── 1. 店面審核 ── -->
+    <div class="sec-card">
+      <div class="sec-head">
+        <span class="sec-title">店面審核</span>
+        <div class="sec-tools">
+          <button class="btn btn-refresh" onclick="renderStoreApproval()">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><path d="M10.5 6A4.5 4.5 0 1 1 6 1.5v1.25L8.5 1 6 -1.25V0A6 6 0 1 0 12 6h-1.5z"/></svg>
+            重新整理
+          </button>
+        </div>
+      </div>
+      <div class="sec-body" id="storeApprovalBody">
+        <div class="empty-state">目前沒有待審核的店面申請</div>
+      </div>
+    </div>
+
+    <!-- ── 3. 客戶訂單 ── -->
+    <div class="sec-card">
+      <div class="sec-head">
+        <span class="sec-title">客戶訂單</span>
+        <div class="sec-tools">
+          <div class="filter-tabs">
+            <button class="ftab active" id="ftAll"   onclick="setFilter('all')">全部</button>
+            <button class="ftab"        id="ftToday" onclick="setFilter('today')">今日</button>
+          </div>
+          <button class="btn btn-refresh" onclick="renderOrders()">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><path d="M10.5 6A4.5 4.5 0 1 1 6 1.5v1.25L8.5 1 6 -1.25V0A6 6 0 1 0 12 6h-1.5z"/></svg>
+            重新整理
+          </button>
+        </div>
+      </div>
+      <div class="sec-body" id="ordersBody">
+        <div class="empty-state">目前沒有訂單</div>
+      </div>
+    </div>
+
+    <!-- ── 4. 已封鎖使用者 ── -->
+    <div class="sec-card">
+      <div class="sec-head">
+        <span class="sec-title">已封鎖使用者</span>
+        <div class="sec-tools">
+          <button class="btn btn-refresh" onclick="renderBlocked()">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><path d="M10.5 6A4.5 4.5 0 1 1 6 1.5v1.25L8.5 1 6 -1.25V0A6 6 0 1 0 12 6h-1.5z"/></svg>
+            重新整理
+          </button>
+        </div>
+      </div>
+      <div class="sec-body" id="blockedBody">
+        <div class="empty-state">目前沒有被封鎖的使用者</div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<div id="toast"></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script>
+// ── Firebase ──────────────────────────────────────────────────
+const firebaseConfig = {
+  apiKey: "AIzaSyDOl7Kq_mZZPdCPkSb_oRPBlxh37sZG5ls",
+  authDomain: "xiangyue-order.firebaseapp.com",
+  projectId: "xiangyue-order",
+  storageBucket: "xiangyue-order.firebasestorage.app",
+  messagingSenderId: "89673554795",
+  appId: "1:89673554795:web:e101e39be2d99349a84a2e"
+};
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+// 驗證登入狀態 - 使用 Firebase Auth 而非 localStorage
+auth.onAuthStateChanged(user => {
+  if (!user) {
+    location.href = '後台管理.html';
+  } else {
+    // Cloud status → Firebase
+    var pill = document.getElementById('tbCloud');
+    var text = document.getElementById('tbCloudText');
+    pill.className = 'tb-cloud ok';
+    text.textContent = 'Firebase 連線中';
+  }
+});
+
+function toggleSection(key) {
+  var body = document.getElementById('body-' + key);
+  var btn  = document.getElementById('toggle-' + key);
+  var isOpen = !body.classList.contains('collapsed');
+  body.classList.toggle('collapsed', isOpen);
+  btn.classList.toggle('open', !isOpen);
+}
+
+function doLogout() {
+  auth.signOut().then(() => location.href = '後台管理.html');
+}
+
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+function todayStr() { return new Date().toISOString().slice(0,10); }
+
+// ── 1. 店面審核 (real-time) ───────────────────────────────────
+db.collection('stores').where('status','==','pending').onSnapshot(snap => {
+  var el = document.getElementById('storeApprovalBody');
+  var pending = [];
+  snap.forEach(doc => pending.push(doc.data()));
+  if (!pending.length) { el.innerHTML = '<div class="empty-state">目前沒有待審核的店面申請</div>'; return; }
+  el.innerHTML = pending.map(s => `
+    <div class="store-row">
+      <div class="store-info">
+        <div class="store-name-row"><span class="store-name">${esc(s.name)}</span></div>
+        <div class="store-meta">
+          <span>負責人：${esc(s.ownerName)}</span>
+          ${s.city?`<span>${esc(s.city)}</span>`:''}
+          <span>${esc(s.district)}</span>
+          <span>${esc(s.address)}</span>
+          <span>${esc(s.phone)}</span>
+          <span>申請：${esc(s.appliedAt)}</span>
+        </div>
+      </div>
+      <div class="store-actions">
+        <button class="btn btn-approve" onclick="approveStore('${esc(s.id)}',true)">通過</button>
+        <button class="btn btn-reject"  onclick="approveStore('${esc(s.id)}',false)">拒絕</button>
+      </div>
+    </div>`).join('');
+});
+
+function renderStoreApproval() {}
+
+function approveStore(id, approve) {
+  db.collection('stores').doc(id).update({ status: approve ? 'approved' : 'rejected' })
+    .then(() => showToast(approve ? '已通過店面申請' : '已拒絕店面申請'))
+    .catch(() => showToast('操作失敗，請重試'));
+}
+
+// ── 2. 封鎖名單 + 訂單 (real-time) ───────────────────────────
+var blockedMap  = {};
+var allOrders   = [];
+var storeMap    = {};
+var customerMap = {};
+var orderFilter = 'all';
+
+db.collection('customers').onSnapshot(snap => {
+  snap.forEach(doc => { customerMap[doc.id] = doc.data(); });
+  renderOrdersLocal();
+});
+
+db.collection('stores').onSnapshot(snap => {
+  snap.forEach(doc => { var s = doc.data(); storeMap[s.id] = s; });
+  renderOrdersLocal();
+});
+
+db.collection('blockList').onSnapshot(snap => {
+  blockedMap = {};
+  snap.forEach(doc => { blockedMap[doc.id] = doc.data(); });
+  renderBlockedList();
+  renderOrdersLocal();
+});
+
+db.collection('orders').orderBy('createdAt','desc').onSnapshot(snap => {
+  allOrders = [];
+  snap.forEach(doc => allOrders.push(doc.data()));
+  cleanupOrders(allOrders);
+  renderOrdersLocal();
+});
+
+function setFilter(f) {
+  orderFilter = f;
+  document.getElementById('ftAll').classList.toggle('active', f==='all');
+  document.getElementById('ftToday').classList.toggle('active', f==='today');
+  renderOrdersLocal();
+}
+
+function renderOrders() { renderOrdersLocal(); }
+
+function getTs(val) {
+  if (!val) return 0;
+  if (val.toMillis) return val.toMillis();
+  var d = new Date(val);
+  return isNaN(d) ? 0 : d.getTime();
+}
+
+function cleanupOrders(orders) {
+  var dayCutoff   = Date.now() - 24 * 60 * 60 * 1000;
+  var monthCutoff = Date.now() - 30 * 24 * 60 * 60 * 1000;
+  orders.forEach(o => {
+    if (o.status === 'cancelled') {
+      var ts = getTs(o.cancelledAt);
+      if (ts && ts < dayCutoff) db.collection('orders').doc(o.id).delete();
+    } else if (o.status === 'completed') {
+      var ts = getTs(o.completedAt);
+      if (ts && ts < monthCutoff) db.collection('orders').doc(o.id).delete();
+    }
+  });
+}
+
+function renderOrdersLocal() {
+  var dayCutoff   = Date.now() - 24 * 60 * 60 * 1000;
+  var monthCutoff = Date.now() - 30 * 24 * 60 * 60 * 1000;
+  var orders = allOrders.filter(o => {
+    if (o.status === 'cancelled') {
+      var ts = getTs(o.cancelledAt);
+      return !ts || ts >= dayCutoff;
+    }
+    if (o.status === 'completed') {
+      var ts = getTs(o.completedAt);
+      return !ts || ts >= monthCutoff;
+    }
+    return true;
+  });
+  if (orderFilter === 'today') {
+    var td = todayStr();
+    orders = orders.filter(o => o.createdAt && o.createdAt.startsWith(td));
+  }
+  var el = document.getElementById('ordersBody');
+  if (!orders.length) { el.innerHTML = '<div class="empty-state">目前沒有訂單</div>'; return; }
+
+  var STATUS_DEF = [
+    { key:'pending',    label:'待處理', defaultOpen:true  },
+    { key:'processing', label:'處理中', defaultOpen:true  },
+    { key:'completed',  label:'已完成', defaultOpen:false },
+    { key:'cancelled',  label:'已取消', defaultOpen:false },
+  ];
+  var html = '';
+  STATUS_DEF.forEach(def => {
+    var grp  = orders.filter(o => (o.status||'pending') === def.key);
+    var open = def.defaultOpen;
+    html += `
+      <div class="sg-wrap">
+        <div class="sg-head" onclick="toggleStatusGroup('${def.key}')">
+          <span class="sg-dot ${def.key}"></span>
+          <span class="sg-name">${def.label}</span>
+          <span class="sg-count">${grp.length} 筆</span>
+          <svg class="sg-chevron${open?' open':''}" id="sgc_${def.key}" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 6l4 4 4-4"/>
+          </svg>
+        </div>
+        <div class="sg-body${open?' open':''}" id="sgb_${def.key}">
+          ${renderCityGroups(grp)}
+        </div>
+      </div>`;
+  });
+  el.innerHTML = html;
+}
+
+function toggleStatusGroup(key) {
+  document.getElementById('sgb_'+key).classList.toggle('open');
+  document.getElementById('sgc_'+key).classList.toggle('open');
+}
+
+function buildCityGroups(orders) {
+  var groups = {};
+  orders.forEach(o => {
+    var store = storeMap[o.storeId] || {};
+    var city  = store.city || '未分類';
+    var dist  = store.district || o.district || '未知地區';
+    if (!groups[city]) groups[city] = {};
+    if (!groups[city][dist]) groups[city][dist] = [];
+    groups[city][dist].push(o);
+  });
+  return groups;
+}
+
+function renderCityGroups(orders) {
+  if (!orders.length) return '<div class="empty-state" style="padding:20px;">此狀態尚無訂單</div>';
+  var groups = buildCityGroups(orders);
+  var html = '';
+  Object.keys(groups).sort().forEach(city => {
+    var total = Object.values(groups[city]).reduce((a,b)=>a+b.length,0);
+    html += `<div class="city-group"><div class="city-label">${esc(city)}<span class="city-count">${total} 筆</span></div>`;
+    Object.keys(groups[city]).sort().forEach(dist => {
+      html += `<div class="district-group"><div class="district-label">${esc(dist)}</div>`;
+      groups[city][dist].forEach(o => { html += renderOrderCard(o); });
+      html += '</div>';
+    });
+    html += '</div>';
+  });
+  return html;
+}
+
+function renderOrderCard(o) {
+  var blocked    = !!blockedMap[o.userId];
+  var isPending  = (o.status||'pending') === 'pending';
+  var store      = storeMap[o.storeId] || {};
+  var customer   = customerMap[o.userId] || {};
+  var clientCode = customer.clientCode || '';
+  var address    = store.address || '';
+  return `
+    <div class="order-card">
+      <div class="order-top">
+        <input class="order-code-badge${clientCode?'':' empty-code'}"
+          type="text"
+          value="${esc(clientCode)}"
+          placeholder="設定代碼"
+          title="點擊編輯此客戶代碼"
+          onblur="saveClientCode('${esc(o.userId)}',this)"
+          onkeydown="if(event.key==='Enter'){this.blur();}"
+        />
+        <div>
+          <div class="order-store-name">${esc(o.storeName)}</div>
+          ${address?`<div class="order-address">${esc(address)}</div>`:''}
+        </div>
+        <span class="order-time">${esc(o.createdAt||'')}</span>
+      </div>
+      <div class="order-body">
+        <div class="order-content-area">
+          <div class="order-content-label">叫貨內容</div>
+          <div class="order-content">${esc(o.content)}</div>
+          ${o.note?`<div class="order-note">備註：<span>${esc(o.note)}</span></div>`:''}
+        </div>
+        <div class="order-actions">
+          ${isPending?`<button class="btn btn-complete" onclick="quickComplete('${esc(o.id)}')">
+            <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><polyline points="1,5.5 4,8.5 10,2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>完成</button>`:''}
+          <select class="status-select ${o.status||'pending'}" onchange="updateOrderStatus('${esc(o.id)}',this)">
+            <option value="pending"    ${(o.status||'pending')==='pending'?'selected':''}>待處理</option>
+            <option value="processing" ${o.status==='processing'?'selected':''}>處理中</option>
+            <option value="completed"  ${o.status==='completed'?'selected':''}>已完成</option>
+            <option value="cancelled"  ${o.status==='cancelled'?'selected':''}>已取消</option>
+          </select>
+          ${!blocked
+            ?`<button class="btn btn-block" onclick="blockUser('${esc(o.userId)}','${esc(o.userName)}')">封鎖用戶</button>`
+            :`<span style="font-size:11px;color:var(--red);font-weight:700;">已封鎖</span>`}
+        </div>
+      </div>
+    </div>`;
+}
+
+function saveClientCode(userId, input) {
+  var code = input.value.trim();
+  if (!userId) return;
+  db.collection('customers').doc(userId).set({ clientCode: code }, { merge: true })
+    .then(() => {
+      input.classList.toggle('empty-code', !code);
+      showToast('客戶代碼已儲存');
+    })
+    .catch(() => showToast('儲存失敗'));
+}
+
+function quickComplete(orderId) {
+  db.collection('orders').doc(orderId).update({
+    status: 'completed',
+    completedAt: firebase.firestore.FieldValue.serverTimestamp()
+  }).then(() => showToast('訂單 #'+orderId+' 已完成'));
+}
+
+function updateOrderStatus(orderId, sel) {
+  var update = { status: sel.value };
+  if (sel.value === 'completed') update.completedAt = firebase.firestore.FieldValue.serverTimestamp();
+  if (sel.value === 'cancelled') update.cancelledAt = firebase.firestore.FieldValue.serverTimestamp();
+  db.collection('orders').doc(orderId).update(update)
+    .then(() => { sel.className='status-select '+sel.value; showToast('狀態已更新'); });
+}
+
+function blockUser(userId, userName) {
+  if (!confirm('確定要封鎖「'+userName+'」嗎？')) return;
+  db.collection('blockList').doc(userId).set({ userId, userName })
+    .then(() => showToast('已封鎖「'+userName+'」'));
+}
+
+function renderBlockedList() {
+  var list = Object.values(blockedMap);
+  var el   = document.getElementById('blockedBody');
+  if (!list.length) { el.innerHTML = '<div class="empty-state">目前沒有被封鎖的使用者</div>'; return; }
+  el.innerHTML = list.map(b => `
+    <div class="blocked-row">
+      <div class="blocked-info"><div class="blocked-name">${esc(b.userName)}</div></div>
+      <button class="btn btn-unblock" onclick="unblockUser('${esc(b.userId)}','${esc(b.userName)}')">解除封鎖</button>
+    </div>`).join('');
+}
+function renderBlocked() {}
+
+function unblockUser(userId, userName) {
+  db.collection('blockList').doc(userId).delete()
+    .then(() => showToast('已解除「'+userName+'」的封鎖'));
+}
+
+// ── 重要公告 ──────────────────────────────────────────────────
+db.collection('config').doc('announcement').get().then(doc => {
+  var val  = doc.exists ? (doc.data().text||'') : '';
+  var prev = document.getElementById('announcementPreview');
+  if (val.trim()) { prev.textContent=val; prev.classList.remove('empty'); }
+  else            { prev.textContent='目前無公告'; prev.classList.add('empty'); }
+  document.getElementById('announcementInput').value = val;
+});
+
+function saveAnnouncement() {
+  var val = document.getElementById('announcementInput').value.trim();
+  db.collection('config').doc('announcement').set({ text: val }).then(() => {
+    var prev = document.getElementById('announcementPreview');
+    if (val) { prev.textContent=val; prev.classList.remove('empty'); }
+    else     { prev.textContent='目前無公告'; prev.classList.add('empty'); }
+    showToast(val ? '公告已儲存' : '公告已清除');
+  });
+}
+function clearAnnouncement() {
+  document.getElementById('announcementInput').value = '';
+  db.collection('config').doc('announcement').set({ text:'' }).then(() => {
+    var prev = document.getElementById('announcementPreview');
+    prev.textContent='目前無公告'; prev.classList.add('empty');
+    showToast('公告已清除');
+  });
+}
+
+// ── 今日送貨區域 ───────────────────────────────────────────────
+var deliveryList = [];
+
+db.collection('config').doc('deliveryAreas').get().then(doc => {
+  var raw = doc.exists ? (doc.data().text||'') : '';
+  deliveryList = raw ? raw.split('\n').filter(s=>s.trim()) : [];
+  renderDeliveryTags();
+});
+
+function renderDeliveryTags() {
+  var wrap = document.getElementById('deliveryTags');
+  if (!deliveryList.length) { wrap.innerHTML='<span style="font-size:12px;color:var(--muted);">尚無送貨區域</span>'; return; }
+  wrap.innerHTML = deliveryList.map((t,i)=>
+    `<span class="delivery-tag">${esc(t)}<button onclick="removeDeliveryTag(${i})" title="移除">×</button></span>`
+  ).join('');
+}
+function addDeliveryTag() {
+  var inp=document.getElementById('deliveryInp'), val=inp.value.trim();
+  if (!val) return;
+  if (!deliveryList.includes(val)) deliveryList.push(val);
+  inp.value=''; renderDeliveryTags();
+}
+function removeDeliveryTag(idx) { deliveryList.splice(idx,1); renderDeliveryTags(); }
+function saveDelivery() {
+  var str = deliveryList.join('\n');
+  db.collection('config').doc('deliveryAreas').set({ text:str })
+    .then(() => showToast(str ? '送貨區域已儲存' : '已清除'));
+}
+function clearDelivery() {
+  deliveryList=[];
+  db.collection('config').doc('deliveryAreas').set({ text:'' })
+    .then(() => { renderDeliveryTags(); showToast('送貨區域已清除'); });
+}
+</script>
+</body>
+</html>

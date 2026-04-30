@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>商品管理 — 翔躍企業社後台</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --gold:        #4F46E5;
+  --gold-dark:   #4338CA;
+  --gold-mid:    #6366F1;
+  --gold-light:  #EEF2FF;
+  --gold-border: #C7D2FE;
+  --text:        #0F172A;
+  --muted:       #64748B;
+  --border:      #E2E8F0;
+  --bg:          #F8FAFC;
+  --card:        #FFFFFF;
+  --green:       #10b981;
+  --green-bg:    #ecfdf5;
+  --red:         #ef4444;
+  --sidebar-w:   220px;
+  --topbar-h:    58px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Noto Sans TC',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
+
+/* ── Topbar ── */
+.topbar {
+  height:var(--topbar-h); background:var(--card); border-bottom:1px solid var(--border);
+  display:flex; align-items:center; padding:0 24px; gap:16px;
+  position:fixed; top:0; left:0; right:0; z-index:100;
+  box-shadow:0 1px 8px rgba(0,0,0,.06);
+}
+.tb-logo {
+  width:36px; height:36px; background:linear-gradient(150deg,var(--gold-mid),var(--gold-dark));
+  border-radius:10px; display:flex; align-items:center; justify-content:center; flex-shrink:0;
+}
+.tb-logo svg { width:20px; height:20px; }
+.tb-brand {
+  position:absolute; left:50%; transform:translateX(-50%);
+  font-size:20px; font-weight:900; color:var(--text); letter-spacing:2px;
+  pointer-events:none;
+}
+.tb-sep { flex:1; }
+.tb-badge {
+  background:var(--gold-light); border:1px solid var(--gold-border);
+  color:var(--gold); font-size:11px; font-weight:700;
+  padding:4px 12px; border-radius:100px; letter-spacing:.5px;
+}
+.tb-cloud {
+  display:flex; align-items:center; gap:7px; padding:6px 14px; border-radius:100px;
+  border:1.5px solid var(--border); font-size:12px; font-weight:600;
+  color:var(--muted); background:var(--bg); text-decoration:none;
+  transition:all .18s; white-space:nowrap;
+}
+.tb-cloud.ok  { border-color:#bbf7d0; color:var(--green); background:var(--green-bg); }
+.tb-cloud.err { border-color:#fecaca; color:var(--red);   background:#fff5f5; }
+.tb-cloud-dot { width:7px; height:7px; border-radius:50%; background:var(--muted); flex-shrink:0; }
+.tb-cloud.ok  .tb-cloud-dot { background:var(--green); box-shadow:0 0 0 3px rgba(22,163,74,.20); }
+.tb-cloud.err .tb-cloud-dot { background:var(--red);   box-shadow:0 0 0 3px rgba(220,38,38,.20); }
+.tb-logout {
+  padding:7px 16px; border-radius:8px; border:1.5px solid var(--border);
+  background:transparent; color:var(--muted); font-size:12px; font-weight:600;
+  font-family:inherit; cursor:pointer; transition:all .15s;
+}
+.tb-logout:hover { border-color:#fca5a5; color:var(--red); background:#fff5f5; }
+
+/* ── Layout ── */
+.admin-body { display:flex; margin-top:var(--topbar-h); min-height:calc(100vh - var(--topbar-h)); }
+
+/* ── Sidebar ── */
+.sidebar {
+  width:var(--sidebar-w); background:#1E293B;
+  position:fixed; top:var(--topbar-h); left:0; bottom:0;
+  overflow-y:auto; display:flex; flex-direction:column; padding:24px 0 32px;
+}
+.sb-section-label {
+  font-size:10px; font-weight:700; color:#475569; letter-spacing:1.5px;
+  text-transform:uppercase; padding:0 20px; margin-bottom:8px;
+}
+.sb-item {
+  display:flex; align-items:center; gap:11px; padding:10px 20px;
+  font-size:13px; font-weight:600; color:#94A3B8; text-decoration:none;
+  transition:all .15s; border-left:3px solid transparent;
+}
+.sb-item:hover { background:rgba(255,255,255,.06); color:#CBD5E1; }
+.sb-item.active { background:rgba(79,70,229,.18); color:#A5B4FC; border-left-color:var(--gold); font-weight:700; }
+.sb-icon { width:18px; height:18px; opacity:.5; flex-shrink:0; }
+.sb-item.active .sb-icon, .sb-item:hover .sb-icon { opacity:1; }
+.sb-divider { height:1px; background:rgba(255,255,255,.08); margin:12px 20px; }
+
+/* ── Main ── */
+.main-area { margin-left:var(--sidebar-w); flex:1; padding:36px 40px 80px; min-width:0; max-width:980px; }
+.area-title { font-size:22px; font-weight:900; letter-spacing:-.3px; margin-bottom:3px; }
+.area-sub   { font-size:13px; color:var(--muted); margin-bottom:32px; }
+
+/* ── Section Card ── */
+.sec-card {
+  background:var(--card); border-radius:18px; border:1px solid var(--border);
+  box-shadow:0 1px 4px rgba(0,0,0,.04), 0 6px 20px rgba(0,0,0,.05);
+  overflow:hidden; margin-bottom:28px;
+}
+.sec-head {
+  padding:16px 24px; border-bottom:1px solid var(--border); background:var(--bg);
+  display:flex; align-items:center; justify-content:space-between; gap:12px;
+}
+.sec-title { font-size:15px; font-weight:800; color:var(--text); }
+.sec-tools { display:flex; align-items:center; gap:8px; }
+.sec-body  { padding:20px 24px; }
+
+/* ── Buttons ── */
+.btn {
+  padding:7px 14px; border-radius:9px; font-size:12px; font-weight:700;
+  font-family:inherit; cursor:pointer; transition:all .15s; border:none; white-space:nowrap;
+}
+.empty-state { text-align:center; padding:32px; color:var(--muted); font-size:13px; }
+
+/* ── Toast ── */
+#toast {
+  position:fixed; bottom:32px; left:50%; transform:translateX(-50%) translateY(80px);
+  background:#0F172A; color:white; padding:12px 24px; border-radius:12px;
+  font-size:13px; font-weight:600; box-shadow:0 8px 32px rgba(0,0,0,.18);
+  transition:transform .3s cubic-bezier(.16,1,.3,1), opacity .3s;
+  opacity:0; z-index:200; white-space:nowrap;
+}
+#toast.show { transform:translateX(-50%) translateY(0); opacity:1; }
+
+/* ── 商品管理 ── */
+.prod-tabs { display:flex; gap:4px; margin-bottom:20px; flex-wrap:wrap; }
+.prod-tab {
+  padding:6px 16px; border-radius:8px; font-size:12px; font-weight:700;
+  font-family:inherit; cursor:pointer; border:1.5px solid var(--border);
+  background:transparent; color:var(--muted); transition:all .15s;
+}
+.prod-tab.active { background:var(--gold-light); color:var(--gold); border-color:var(--gold-border); }
+.prod-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
+@media(max-width:700px){ .prod-grid{ grid-template-columns:repeat(2,1fr); } }
+@media(max-width:460px){ .prod-grid{ grid-template-columns:1fr; } }
+.prod-card {
+  border:1px solid var(--border); border-radius:12px; overflow:hidden;
+  background:#fff; transition:box-shadow .2s, transform .2s; display:flex; flex-direction:column;
+}
+.prod-card:hover { box-shadow:0 4px 18px rgba(0,0,0,.09); transform:translateY(-2px); }
+.prod-card-img {
+  width:100%; height:150px; background:#f1f5f9;
+  display:flex; align-items:center; justify-content:center; overflow:hidden; flex-shrink:0;
+}
+.prod-card-img img { width:100%; height:100%; object-fit:cover; display:block; }
+.prod-card-no-img { font-size:11px; color:#94a3b8; letter-spacing:.5px; }
+.prod-card-body { padding:12px 14px; display:flex; flex-direction:column; flex:1; }
+.prod-card-name  { font-size:13px; font-weight:700; color:var(--text); margin-bottom:4px; }
+.prod-card-price { font-size:12px; font-weight:700; color:var(--gold); margin-bottom:6px; }
+.prod-card-desc  { font-size:11px; color:var(--muted); line-height:1.6; flex:1; margin-bottom:10px; }
+.prod-card-actions { display:flex; gap:6px; margin-top:auto; }
+.btn-add-prod {
+  background:linear-gradient(135deg,var(--gold-mid),var(--gold-dark));
+  color:white; box-shadow:0 2px 8px rgba(79,70,229,.22);
+}
+.btn-add-prod:hover { filter:brightness(1.08); }
+.btn-edit-prod { background:var(--gold-light); color:var(--gold); border:1.5px solid var(--gold-border); }
+.btn-edit-prod:hover { filter:brightness(.96); }
+.btn-del-prod  { background:#fff5f5; color:var(--red); border:1.5px solid #fecaca; }
+.btn-del-prod:hover  { background:#fee2e2; }
+.prod-form-wrap {
+  background:var(--bg); border:1.5px solid var(--gold-border);
+  border-radius:14px; padding:20px; margin-bottom:20px;
+}
+.prod-form-wrap h4 { font-size:13px; font-weight:800; margin-bottom:16px; color:var(--text); }
+.prod-form-grid { display:grid; grid-template-columns:150px 1fr; gap:16px; align-items:start; }
+@media(max-width:500px){ .prod-form-grid{ grid-template-columns:1fr; } }
+.prod-img-upload {
+  width:150px; height:150px; border:1.5px dashed var(--border); border-radius:10px;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  cursor:pointer; gap:6px; font-size:11px; color:var(--muted); transition:border-color .15s;
+  overflow:hidden; position:relative; background:#f8fafc; flex-shrink:0;
+}
+.prod-img-upload:hover { border-color:var(--gold); color:var(--gold); }
+.prod-img-upload img { width:100%; height:100%; object-fit:cover; position:absolute; inset:0; border-radius:9px; }
+.prod-img-upload input[type=file] { position:absolute; inset:0; opacity:0; cursor:pointer; width:100%; height:100%; }
+.prod-fields { display:flex; flex-direction:column; gap:10px; flex:1; }
+.prod-inp {
+  width:100%; padding:9px 12px; border:1.5px solid var(--border); border-radius:9px;
+  font-size:13px; font-family:inherit; color:var(--text); outline:none; background:#fff; transition:border-color .15s;
+}
+.prod-inp:focus { border-color:var(--gold); box-shadow:0 0 0 3px rgba(79,70,229,.08); }
+.prod-form-actions { display:flex; gap:8px; margin-top:4px; }
+.btn-prod-submit {
+  padding:9px 20px; border-radius:9px; font-size:12px; font-weight:700; font-family:inherit;
+  cursor:pointer; border:none; background:linear-gradient(135deg,var(--gold-mid),var(--gold-dark));
+  color:white; box-shadow:0 2px 8px rgba(79,70,229,.22); transition:filter .15s;
+}
+.btn-prod-submit:hover { filter:brightness(1.08); }
+.btn-prod-cancel {
+  padding:9px 16px; border-radius:9px; font-size:12px; font-weight:700; font-family:inherit;
+  cursor:pointer; border:1.5px solid var(--border); background:transparent; color:var(--muted); transition:all .15s;
+}
+.btn-prod-cancel:hover { border-color:#fca5a5; color:var(--red); background:#fff5f5; }
+.btn-sync {
+  display:flex; align-items:center; gap:6px;
+  padding:7px 16px; border-radius:9px; font-size:12px; font-weight:700; font-family:inherit;
+  cursor:pointer; border:none; transition:all .15s;
+  background:linear-gradient(135deg,var(--green),#059669); color:white;
+  box-shadow:0 2px 8px rgba(16,185,129,.28);
+}
+.btn-sync:hover { filter:brightness(1.08); }
+.btn-sync:disabled { opacity:.5; cursor:default; filter:none; }
+.sync-status { font-size:11px; color:var(--muted); margin-left:4px; }
+.sync-status.ok  { color:var(--green); }
+.sync-status.err { color:var(--red); }
+</style>
+</head>
+<body>
+
+<!-- Topbar -->
+<div class="topbar">
+  <span class="tb-brand">後台管理</span>
+  <div class="tb-sep"></div>
+  <a class="tb-cloud" id="tbCloud" href="後台管理-進階設定.html">
+    <span class="tb-cloud-dot"></span>
+    <span id="tbCloudText">檢查中…</span>
+  </a>
+  <button class="tb-logout" onclick="doLogout()">登出</button>
+</div>
+
+<div class="admin-body">
+  <!-- Sidebar -->
+  <nav class="sidebar">
+    <div class="sb-section-label">內容管理</div>
+    <a class="sb-item" href="後台管理.html">
+      <svg class="sb-icon" viewBox="0 0 20 20" fill="currentColor"><path d="M2 5a2 2 0 012-2h12a2 2 0 012 2v2a2 2 0 01-2 2H4a2 2 0 01-2-2V5zM2 13a2 2 0 012-2h12a2 2 0 012 2v2a2 2 0 01-2 2H4a2 2 0 01-2-2v-2z"/></svg>
+      布告欄管理
+    </a>
+    <a class="sb-item" href="後台管理-出貨管理.html">
+      <svg class="sb-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 2a4 4 0 00-4 4v1H5a1 1 0 00-.994.89l-1 9A1 1 0 004 18h12a1 1 0 00.994-1.11l-1-9A1 1 0 0015 7h-1V6a4 4 0 00-4-4zm2 5V6a2 2 0 10-4 0v1h4zm-6 3a1 1 0 112 0 1 1 0 01-2 0zm7-1a1 1 0 100 2 1 1 0 000-2z" clip-rule="evenodd"/></svg>
+      出貨管理
+    </a>
+    <a class="sb-item active" href="後台管理-商品管理.html">
+      <svg class="sb-icon" viewBox="0 0 20 20" fill="currentColor"><path d="M4 3a2 2 0 100 4h12a2 2 0 100-4H4zM3 8h14v7a2 2 0 01-2 2H5a2 2 0 01-2-2V8zm5 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z"/></svg>
+      商品管理
+    </a>
+    <div class="sb-divider"></div>
+    <a class="sb-item" href="後台管理-進階設定.html">
+      <svg class="sb-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"/></svg>
+      進階設定
+    </a>
+  </nav>
+
+  <!-- Main -->
+  <main class="main-area">
+    <div class="area-title">商品管理</div>
+    <div class="area-sub">新增、編輯官網商品，儲存後即時同步至官網頁面</div>
+
+    <div class="sec-card">
+      <div class="sec-head">
+        <div class="prod-tabs" style="margin:0;">
+          <button class="prod-tab active" id="ptab_腳底按摩椅"      onclick="setProdTab('腳底按摩椅')">腳底按摩椅</button>
+          <button class="prod-tab"        id="ptab_指壓床"          onclick="setProdTab('指壓床')">指壓床</button>
+          <button class="prod-tab"        id="ptab_養生館材料及設備" onclick="setProdTab('養生館材料及設備')">養生館材料及設備</button>
+        </div>
+        <div class="sec-tools">
+          <span class="sync-status" id="syncStatus"></span>
+          <button class="btn-sync" id="btnSync" onclick="syncToCloud()">
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><polyline points="1.5,6.5 5.5,10.5 11.5,2.5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            同步至官網
+          </button>
+          <button class="btn btn-add-prod" onclick="toggleProdForm()">＋ 新增商品</button>
+        </div>
+      </div>
+      <div class="sec-body">
+        <!-- 新增 / 編輯表單 -->
+        <div id="prodFormWrap" class="prod-form-wrap" style="display:none;">
+          <h4 id="prodFormTitle">新增商品</h4>
+          <div class="prod-form-grid">
+            <label class="prod-img-upload" id="prodImgLabel">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+              <span id="prodImgHint">點擊上傳圖片</span>
+              <input type="file" id="prodImgFile" accept="image/*" onchange="onProdImg(this)">
+            </label>
+            <div class="prod-fields">
+              <input class="prod-inp" type="text" id="prodName"  placeholder="商品名稱 *" maxlength="40">
+              <input class="prod-inp" type="text" id="prodPrice" placeholder="價格（例：NT$ 3,800 或 歡迎詢價）" maxlength="30">
+              <textarea class="prod-inp" id="prodDesc" placeholder="商品描述（選填）" rows="3" style="resize:vertical;"></textarea>
+              <div class="prod-form-actions">
+                <button class="btn-prod-submit" onclick="submitProd()">儲存商品</button>
+                <button class="btn-prod-cancel" onclick="closeProdForm()">取消</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- 商品 Grid -->
+        <div id="prodGrid" class="prod-grid"></div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<div id="toast"></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script>
+// ── Firebase ──
+const firebaseConfig = {
+  apiKey: "AIzaSyDOl7Kq_mZZPdCPkSb_oRPBlxh37sZG5ls",
+  authDomain: "xiangyue-order.firebaseapp.com",
+  projectId: "xiangyue-order",
+  storageBucket: "xiangyue-order.firebasestorage.app",
+  messagingSenderId: "89673554795",
+  appId: "1:89673554795:web:e101e39be2d99349a84a2e"
+};
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+
+// 驗證登入狀態
+auth.onAuthStateChanged(user => {
+  if (!user) {
+    location.href = '後台管理.html';
+  } else {
+    var key  = localStorage.getItem('xy_masterKey') || '';
+    var bid  = localStorage.getItem('xy_binId')     || '';
+    var pill = document.getElementById('tbCloud');
+    var text = document.getElementById('tbCloudText');
+    if (key && bid) { pill.className='tb-cloud ok';  text.textContent='雲端連線中'; }
+    else            { pill.className='tb-cloud err'; text.textContent='未連結雲端'; }
+  }
+});
+
+function doLogout() {
+  auth.signOut().then(() => location.href = '後台管理.html');
+}
+
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// ── 商品管理 ──────────────────────────────────────────────────
+var currentProdTab = '腳底按摩椅';
+var prodImgBase64  = '';
+var prodEditingId  = '';
+
+function getProducts() {
+  try { return JSON.parse(localStorage.getItem('xy_products') || '{}'); } catch(e) { return {}; }
+}
+function saveProducts(d) { localStorage.setItem('xy_products', JSON.stringify(d)); }
+
+function setProdTab(cat) {
+  currentProdTab = cat;
+  ['腳底按摩椅','指壓床','養生館材料及設備'].forEach(c => {
+    var el = document.getElementById('ptab_' + c);
+    if (el) el.classList.toggle('active', c === cat);
+  });
+  closeProdForm();
+  renderProdGrid();
+}
+
+function renderProdGrid() {
+  var prods = (getProducts()[currentProdTab] || []);
+  var wrap  = document.getElementById('prodGrid');
+  if (!prods.length) {
+    wrap.innerHTML = '<div class="empty-state">尚無商品，點右上「＋ 新增商品」開始建立</div>';
+    return;
+  }
+  wrap.innerHTML = prods.map(p => `
+    <div class="prod-card">
+      <div class="prod-card-img">
+        ${p.img ? `<img src="${p.img}" alt="${esc(p.name)}">` : '<span class="prod-card-no-img">尚無圖片</span>'}
+      </div>
+      <div class="prod-card-body">
+        <div class="prod-card-name">${esc(p.name)}</div>
+        <div class="prod-card-price">${esc(p.price||'')}</div>
+        ${p.desc ? `<div class="prod-card-desc">${esc(p.desc)}</div>` : ''}
+        <div class="prod-card-actions">
+          <button class="btn btn-edit-prod" onclick="startEditProd('${esc(p.id)}')">編輯</button>
+          <button class="btn btn-del-prod"  onclick="deleteProd('${esc(p.id)}')">刪除</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function toggleProdForm() {
+  var wrap = document.getElementById('prodFormWrap');
+  if (wrap.style.display === 'none') {
+    prodEditingId = '';
+    prodImgBase64 = '';
+    document.getElementById('prodFormTitle').textContent = '新增商品';
+    document.getElementById('prodName').value  = '';
+    document.getElementById('prodPrice').value = '';
+    document.getElementById('prodDesc').value  = '';
+    document.getElementById('prodImgHint').style.display = '';
+    var oldImg = document.querySelector('#prodImgLabel img');
+    if (oldImg) oldImg.remove();
+    wrap.style.display = 'block';
+    wrap.scrollIntoView({ behavior:'smooth', block:'nearest' });
+  } else {
+    closeProdForm();
+  }
+}
+
+function closeProdForm() {
+  document.getElementById('prodFormWrap').style.display = 'none';
+  prodImgBase64 = '';
+  prodEditingId = '';
+}
+
+function onProdImg(input) {
+  var file = input.files[0];
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    prodImgBase64 = e.target.result;
+    var lbl = document.getElementById('prodImgLabel');
+    var oldImg = lbl.querySelector('img');
+    if (oldImg) oldImg.remove();
+    var img = document.createElement('img');
+    img.src = prodImgBase64;
+    lbl.appendChild(img);
+    document.getElementById('prodImgHint').style.display = 'none';
+  };
+  reader.readAsDataURL(file);
+}
+
+function startEditProd(id) {
+  var prods = getProducts()[currentProdTab] || [];
+  var p = prods.find(x => x.id === id);
+  if (!p) return;
+  prodEditingId = id;
+  prodImgBase64 = p.img || '';
+  document.getElementById('prodFormTitle').textContent = '編輯商品';
+  document.getElementById('prodName').value  = p.name  || '';
+  document.getElementById('prodPrice').value = p.price || '';
+  document.getElementById('prodDesc').value  = p.desc  || '';
+  var lbl = document.getElementById('prodImgLabel');
+  var oldImg = lbl.querySelector('img');
+  if (oldImg) oldImg.remove();
+  if (p.img) {
+    var img = document.createElement('img');
+    img.src = p.img;
+    lbl.appendChild(img);
+    document.getElementById('prodImgHint').style.display = 'none';
+  } else {
+    document.getElementById('prodImgHint').style.display = '';
+  }
+  var wrap = document.getElementById('prodFormWrap');
+  wrap.style.display = 'block';
+  wrap.scrollIntoView({ behavior:'smooth', block:'nearest' });
+}
+
+function submitProd() {
+  var name  = document.getElementById('prodName').value.trim();
+  var price = document.getElementById('prodPrice').value.trim();
+  var desc  = document.getElementById('prodDesc').value.trim();
+  if (!name) { showToast('請輸入商品名稱'); return; }
+  var all = getProducts();
+  if (!all[currentProdTab]) all[currentProdTab] = [];
+  if (prodEditingId) {
+    var idx = all[currentProdTab].findIndex(x => x.id === prodEditingId);
+    if (idx !== -1) {
+      all[currentProdTab][idx].name  = name;
+      all[currentProdTab][idx].price = price;
+      all[currentProdTab][idx].desc  = desc;
+      if (prodImgBase64) all[currentProdTab][idx].img = prodImgBase64;
+    }
+    showToast('商品已更新');
+  } else {
+    all[currentProdTab].push({ id:'P'+Date.now(), name, price, desc, img:prodImgBase64||'' });
+    showToast('商品已新增');
+  }
+  saveProducts(all);
+  closeProdForm();
+  renderProdGrid();
+}
+
+function deleteProd(id) {
+  var all  = getProducts();
+  var list = all[currentProdTab] || [];
+  var p    = list.find(x => x.id === id);
+  if (!p || !confirm(`確定要刪除「${p.name}」嗎？`)) return;
+  all[currentProdTab] = list.filter(x => x.id !== id);
+  saveProducts(all);
+  renderProdGrid();
+  showToast('商品已刪除');
+}
+
+// ── 雲端同步（使用既有 xy_masterKey，獨立商品 Bin）─────────────
+function setSyncSta(msg, cls) {
+  var el = document.getElementById('syncStatus');
+  el.textContent = msg;
+  el.className = 'sync-status' + (cls ? ' ' + cls : '');
+}
+
+async function createPublicBin(key, data) {
+  var res = await fetch('https://api.jsonbin.io/v3/b', {
+    method: 'POST',
+    headers: { 'Content-Type':'application/json', 'X-Master-Key':key, 'X-Bin-Name':'xy_products', 'X-Private':'false' },
+    body: JSON.stringify(data)
+  });
+  if (!res.ok) throw new Error('建立 Bin 失敗 HTTP ' + res.status);
+  var json = await res.json();
+  return json.metadata.id;
+}
+
+async function syncToCloud() {
+  var key = localStorage.getItem('xy_masterKey') || '';
+  if (!key) { setSyncSta('請先在進階設定填入 API Key', 'err'); return; }
+
+  var btn = document.getElementById('btnSync');
+  btn.disabled = true;
+  setSyncSta('上傳中…', '');
+
+  var data  = getProducts();
+  var binId = localStorage.getItem('xy_productsBinId') || '';
+
+  try {
+    // 檢查現有 Bin 是否公開可讀
+    if (binId) {
+      var check = await fetch('https://api.jsonbin.io/v3/b/' + binId + '/latest');
+      if (!check.ok) {
+        // 私有 Bin：刪除後重建公開版
+        setSyncSta('偵測到私有 Bin，重新建立公開版…', '');
+        await fetch('https://api.jsonbin.io/v3/b/' + binId, {
+          method: 'DELETE',
+          headers: { 'X-Master-Key': key }
+        }).catch(function(){});
+        binId = '';
+        localStorage.removeItem('xy_productsBinId');
+      }
+    }
+
+    if (!binId) {
+      // 建立新公開 Bin
+      binId = await createPublicBin(key, data);
+      localStorage.setItem('xy_productsBinId', binId);
+      setSyncSta('✓ 已建立公開 Bin 並同步！ID: ' + binId, 'ok');
+      showToast('新 Bin ID: ' + binId + '（已複製）');
+      navigator.clipboard && navigator.clipboard.writeText(binId).catch(function(){});
+    } else {
+      // 更新既有公開 Bin
+      var res2 = await fetch('https://api.jsonbin.io/v3/b/' + binId, {
+        method: 'PUT',
+        headers: { 'Content-Type':'application/json', 'X-Master-Key':key },
+        body: JSON.stringify(data)
+      });
+      if (!res2.ok) throw new Error('HTTP ' + res2.status);
+      setSyncSta('✓ 同步成功，官網已更新', 'ok');
+    }
+  } catch(e) {
+    setSyncSta('同步失敗：' + e.message, 'err');
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+// 載入時從雲端拉最新（有 cache 先顯示）
+(function loadFromCloud() {
+  var key   = localStorage.getItem('xy_masterKey')    || '';
+  var binId = localStorage.getItem('xy_productsBinId') || '';
+  if (!key || !binId) return;
+  fetch('https://api.jsonbin.io/v3/b/' + binId + '/latest')
+    .then(r => r.json())
+    .then(d => {
+      if (d.record && typeof d.record === 'object') {
+        saveProducts(d.record);
+        renderProdGrid();
+      }
+    }).catch(() => {});
+})();
+
+renderProdGrid();
+</script>
+</body>
+</html>

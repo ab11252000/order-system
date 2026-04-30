@@ -1,0 +1,1064 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>進階設定 — 翔躍企業社後台</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --gold:        #4F46E5;
+  --gold-dark:   #4338CA;
+  --gold-mid:    #6366F1;
+  --gold-light:  #EEF2FF;
+  --gold-border: #C7D2FE;
+  --text:        #0F172A;
+  --text-2:      #334155;
+  --muted:       #64748B;
+  --border:      #E2E8F0;
+  --bg:          #F8FAFC;
+  --card:        #FFFFFF;
+  --green:       #10b981;
+  --green-dark:  #059669;
+  --green-bg:    #ecfdf5;
+  --red:         #ef4444;
+  --sidebar-w:   220px;
+  --topbar-h:    58px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Noto Sans TC',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
+
+/* ── Topbar ── */
+.topbar {
+  height:var(--topbar-h);
+  background:var(--card);
+  border-bottom:1px solid var(--border);
+  display:flex; align-items:center;
+  padding:0 24px; gap:16px;
+  position:fixed; top:0; left:0; right:0; z-index:100;
+  box-shadow:0 1px 8px rgba(0,0,0,.06);
+}
+.tb-logo {
+  width:36px; height:36px;
+  background:linear-gradient(150deg,var(--gold-mid),var(--gold-dark));
+  border-radius:10px;
+  display:flex; align-items:center; justify-content:center; flex-shrink:0;
+}
+.tb-logo svg { width:20px; height:20px; }
+.tb-brand {
+  position:absolute; left:50%; transform:translateX(-50%);
+  font-size:20px; font-weight:900; color:var(--text); letter-spacing:2px;
+  pointer-events:none;
+}
+.tb-sep { flex:1; }
+.tb-badge {
+  background:var(--gold-light); border:1px solid var(--gold-border);
+  color:var(--gold); font-size:11px; font-weight:700;
+  padding:4px 12px; border-radius:100px; letter-spacing:.5px;
+}
+.tb-logout {
+  padding:7px 16px; border-radius:8px;
+  border:1.5px solid var(--border); background:transparent; color:var(--muted);
+  font-size:12px; font-weight:600; font-family:inherit;
+  cursor:pointer; transition:all .15s;
+}
+.tb-logout:hover { border-color:#fca5a5; color:var(--red); background:#fff5f5; }
+
+/* ── Layout ── */
+.admin-body {
+  display:flex;
+  margin-top:var(--topbar-h);
+  min-height:calc(100vh - var(--topbar-h));
+}
+
+/* ── Sidebar ── */
+.sidebar {
+  width:var(--sidebar-w);
+  background:#1E293B;
+  border-right:none;
+  position:fixed; top:var(--topbar-h); left:0; bottom:0;
+  overflow-y:auto; display:flex; flex-direction:column;
+  padding:24px 0 32px;
+}
+.sb-section-label {
+  font-size:10px; font-weight:700; color:#475569;
+  letter-spacing:1.5px; text-transform:uppercase;
+  padding:0 20px; margin-bottom:8px;
+}
+.sb-item {
+  display:flex; align-items:center; gap:11px;
+  padding:10px 20px;
+  font-size:13px; font-weight:600; color:#94A3B8;
+  text-decoration:none; transition:all .15s;
+  border-left:3px solid transparent;
+}
+.sb-item:hover { background:rgba(255,255,255,.06); color:#CBD5E1; }
+.sb-item.active {
+  background:rgba(79,70,229,.18); color:#A5B4FC;
+  border-left-color:var(--gold); font-weight:700;
+}
+.sb-icon { width:18px; height:18px; opacity:.5; flex-shrink:0; }
+.sb-item.active .sb-icon,
+.sb-item:hover .sb-icon { opacity:1; }
+.sb-divider { height:1px; background:rgba(255,255,255,.08); margin:12px 20px; }
+
+/* ── Main ── */
+.main-area {
+  margin-left:var(--sidebar-w);
+  flex:1; padding:36px 40px 80px;
+  min-width:0; max-width:860px;
+}
+.area-title { font-size:22px; font-weight:900; letter-spacing:-.3px; margin-bottom:3px; }
+.area-sub   { font-size:13px; color:var(--muted); margin-bottom:32px; }
+
+/* ── Collapsible section ── */
+.collapse-section { margin-bottom:20px; }
+.collapse-toggle {
+  width:100%;
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:16px 22px;
+  display:flex; align-items:center; gap:14px;
+  cursor:pointer; transition:all .18s;
+  box-shadow:0 1px 4px rgba(0,0,0,.04);
+}
+.collapse-toggle:hover { border-color:var(--gold-border); background:var(--gold-light); }
+.collapse-toggle.open { border-radius:14px 14px 0 0; border-bottom-color:transparent; }
+.ct-icon {
+  width:32px; height:32px; border-radius:9px;
+  background:linear-gradient(135deg,var(--gold-mid),var(--gold-dark));
+  display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  box-shadow:0 2px 8px rgba(200,169,74,.28);
+}
+.ct-icon svg { width:16px; height:16px; }
+.ct-label { font-size:15px; font-weight:800; color:var(--text); flex:1; text-align:left; }
+.ct-status { font-size:12px; color:var(--muted); font-weight:600; }
+.ct-chevron {
+  width:20px; height:20px; color:var(--muted);
+  transition:transform .25s cubic-bezier(.34,1.56,.64,1);
+  flex-shrink:0;
+}
+.collapse-toggle.open .ct-chevron { transform:rotate(180deg); }
+
+.collapse-body {
+  background:var(--card);
+  border:1px solid var(--border); border-top:none;
+  border-radius:0 0 14px 14px;
+  overflow:hidden;
+  max-height:0; transition:max-height .35s cubic-bezier(.4,0,.2,1);
+}
+.collapse-body.open { max-height:2000px; }
+.collapse-inner { padding:6px 0 6px; }
+
+/* ── Cards ── */
+.card {
+  background:var(--bg);
+  border-radius:0;
+  border-top:1px solid var(--border);
+  overflow:hidden;
+}
+.card:last-child { border-radius:0 0 14px 14px; }
+.card-head {
+  padding:16px 24px;
+  display:flex; align-items:center; gap:12px;
+}
+.card-num {
+  width:24px; height:24px; border-radius:50%;
+  background:var(--gold); color:white;
+  font-size:11px; font-weight:900;
+  display:flex; align-items:center; justify-content:center;
+  box-shadow:0 2px 8px rgba(200,169,74,.28); flex-shrink:0;
+}
+.card-title { font-size:14px; font-weight:800; color:var(--text); }
+.card-body  { padding:0 24px 22px; }
+
+/* ── Step content ── */
+.step-desc {
+  font-size:13px; color:var(--muted); line-height:1.8;
+  margin-bottom:14px;
+}
+.step-desc strong { color:var(--text-2); }
+
+.input-row { display:flex; gap:10px; align-items:center; }
+.step-input {
+  flex:1; padding:11px 14px;
+  border:1.5px solid var(--border); border-radius:10px;
+  font-size:14px; font-family:monospace; outline:none;
+  background:#fff; transition:border-color .15s; color:var(--text);
+}
+.step-input:focus {
+  border-color:var(--gold);
+  box-shadow:0 0 0 3px rgba(200,169,74,.10);
+}
+
+/* ── Buttons ── */
+.btn {
+  padding:10px 20px; border-radius:10px;
+  font-size:13px; font-weight:700; font-family:inherit;
+  cursor:pointer; transition:all .18s; white-space:nowrap; border:none;
+}
+.btn-gold {
+  background:linear-gradient(135deg,var(--gold-mid),var(--gold-dark));
+  color:white; box-shadow:0 3px 12px rgba(200,169,74,.28);
+}
+.btn-gold:hover { filter:brightness(1.08); transform:translateY(-1px); }
+.btn-green {
+  background:linear-gradient(135deg,var(--green),var(--green-dark));
+  color:white; box-shadow:0 3px 12px rgba(22,163,74,.24);
+  display:inline-flex; align-items:center; gap:7px;
+}
+.btn-green:hover { filter:brightness(1.08); transform:translateY(-1px); }
+.btn-copy {
+  background:var(--green-bg); color:var(--green);
+  border:1.5px solid #bbf7d0 !important;
+}
+.btn-copy:hover { background:#dcfce7; }
+
+/* ── Password form layout ── */
+.form-col { display:flex; flex-direction:column; gap:12px; }
+.form-row { display:flex; flex-direction:column; gap:6px; }
+.form-lbl { font-size:12px; font-weight:700; color:var(--text-2); letter-spacing:.3px; }
+
+/* ── LINE icon variant ── */
+.ct-icon-line {
+  width:32px; height:32px; border-radius:9px;
+  background:linear-gradient(135deg,#06C755,#04A347);
+  display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  box-shadow:0 2px 8px rgba(6,199,85,.30);
+}
+.ct-icon-line svg { width:18px; height:18px; }
+
+/* ── External link ── */
+.ext-link {
+  display:inline-flex; align-items:center; gap:5px;
+  font-size:12px; font-weight:700; color:var(--gold-dark);
+  text-decoration:none; border-bottom:1px solid var(--gold-border);
+  transition:border-color .15s;
+}
+.ext-link:hover { border-bottom-color:var(--gold-dark); }
+.ext-link svg { width:11px; height:11px; opacity:.7; }
+
+/* ── Status row ── */
+.status-row {
+  display:flex; align-items:center; gap:10px;
+  padding:12px 16px;
+  background:#fff; border-radius:10px;
+  border:1.5px solid var(--border);
+  margin-top:12px;
+}
+.status-dot {
+  width:8px; height:8px; border-radius:50%;
+  background:var(--muted); flex-shrink:0;
+}
+.status-dot.ok  { background:var(--green); box-shadow:0 0 0 3px rgba(22,163,74,.15); }
+.status-dot.err { background:var(--red);   box-shadow:0 0 0 3px rgba(220,38,38,.15); }
+.status-text { font-size:13px; color:var(--muted); }
+.status-text.ok  { color:var(--green); font-weight:600; }
+.status-text.err { color:var(--red); font-weight:600; }
+</style>
+</head>
+<body>
+
+<!-- ── Topbar ── -->
+<div class="topbar">
+  <span class="tb-brand">後台管理</span>
+  <div class="tb-sep"></div>
+  <button class="tb-logout" onclick="doLogout()">登出</button>
+</div>
+
+<div class="admin-body">
+
+  <!-- ── Sidebar ── -->
+  <nav class="sidebar">
+    <div class="sb-section-label">內容管理</div>
+    <a class="sb-item" href="後台管理.html">
+      <svg class="sb-icon" viewBox="0 0 20 20" fill="currentColor"><path d="M2 5a2 2 0 012-2h12a2 2 0 012 2v2a2 2 0 01-2 2H4a2 2 0 01-2-2V5zM2 13a2 2 0 012-2h12a2 2 0 012 2v2a2 2 0 01-2 2H4a2 2 0 01-2-2v-2z"/></svg>
+      布告欄管理
+    </a>
+    <a class="sb-item" href="後台管理-出貨管理.html">
+      <svg class="sb-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 2a4 4 0 00-4 4v1H5a1 1 0 00-.994.89l-1 9A1 1 0 004 18h12a1 1 0 00.994-1.11l-1-9A1 1 0 0015 7h-1V6a4 4 0 00-4-4zm2 5V6a2 2 0 10-4 0v1h4zm-6 3a1 1 0 112 0 1 1 0 01-2 0zm7-1a1 1 0 100 2 1 1 0 000-2z" clip-rule="evenodd"/></svg>
+      出貨管理
+    </a>
+    <a class="sb-item" href="後台管理-商品管理.html">
+      <svg class="sb-icon" viewBox="0 0 20 20" fill="currentColor"><path d="M4 3a2 2 0 100 4h12a2 2 0 100-4H4zM3 8h14v7a2 2 0 01-2 2H5a2 2 0 01-2-2V8zm5 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z"/></svg>
+      商品管理
+    </a>
+    <div class="sb-divider"></div>
+    <a class="sb-item active" href="後台管理-進階設定.html">
+      <svg class="sb-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"/></svg>
+      進階設定
+    </a>
+    <div class="sb-divider"></div>
+  </nav>
+
+  <!-- ── Main ── -->
+  <main class="main-area">
+    <div class="area-title">進階設定</div>
+    <div class="area-sub">管理雲端連結設定，完成後布告欄資料將自動同步至官網</div>
+
+    <!-- 更改密碼 收合區塊 -->
+    <div class="collapse-section">
+      <button class="collapse-toggle" id="pwToggle" onclick="togglePw()">
+        <div class="ct-icon">
+          <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="3" y="7" width="10" height="8" rx="2" fill="white" fill-opacity=".9"/>
+            <path d="M5 7V5a3 3 0 0 1 6 0v2" stroke="white" stroke-width="1.6" stroke-linecap="round"/>
+            <circle cx="8" cy="11" r="1.3" fill="#A5B4FC"/>
+          </svg>
+        </div>
+        <span class="ct-label">更改密碼</span>
+        <span class="ct-status" id="pwCtStatus"></span>
+        <svg class="ct-chevron" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd"/>
+        </svg>
+      </button>
+
+      <div class="collapse-body" id="pwBody">
+        <div class="collapse-inner">
+          <div class="card" style="border-top:none;">
+            <div class="card-body" style="padding-top:22px;">
+              <div class="step-desc">驗證目前密碼後，設定新的登入密碼。密碼將儲存於本機瀏覽器。</div>
+              <div class="form-col">
+                <div class="form-row">
+                  <label class="form-lbl">目前密碼</label>
+                  <input class="step-input" type="password" id="pwCurrent" placeholder="輸入目前密碼">
+                </div>
+                <div class="form-row">
+                  <label class="form-lbl">新密碼</label>
+                  <input class="step-input" type="password" id="pwNew" placeholder="至少 6 個字元">
+                </div>
+                <div class="form-row">
+                  <label class="form-lbl">確認新密碼</label>
+                  <input class="step-input" type="password" id="pwConfirm" placeholder="再次輸入新密碼">
+                </div>
+                <button class="btn btn-gold" style="margin-top:4px;" onclick="changePassword()">確認更改</button>
+              </div>
+              <div class="status-row" id="pwStatus" style="display:none;">
+                <span class="status-dot" id="pwDot"></span>
+                <span class="status-text" id="pwText"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- API Key 收合區塊 -->
+    <div class="collapse-section">
+      <button class="collapse-toggle" id="apiToggle" onclick="toggleSection()">
+        <div class="ct-icon">
+          <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z" fill="white"/>
+            <path fill-rule="evenodd" d="M0 8c0-3.866 3.582-7 8-7s8 3.134 8 7-3.582 7-8 7-8-3.134-8-7zm8-5.5C4.96 2.5 2.5 5.03 2.5 8s2.46 5.5 5.5 5.5 5.5-2.53 5.5-5.5S11.04 2.5 8 2.5z" fill="white" fill-opacity=".5"/>
+            <path d="M6.5 11.5v-3h-1v-1.5H8v4.5H6.5z" fill="white"/>
+          </svg>
+        </div>
+        <span class="ct-label">API Key</span>
+        <span class="ct-status" id="ctStatus">—</span>
+        <svg class="ct-chevron" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd"/>
+        </svg>
+      </button>
+
+      <div class="collapse-body" id="apiBody">
+        <div class="collapse-inner">
+
+          <!-- Step 1: Master Key -->
+          <div class="card">
+            <div class="card-head">
+              <div class="card-num">1</div>
+              <div class="card-title">Master Key</div>
+            </div>
+            <div class="card-body">
+              <div class="step-desc">
+                貼上您在 JSONBin 後台取得的 <strong>Master Key</strong>，儲存後系統將使用此金鑰存取雲端資料。
+              </div>
+              <div class="input-row">
+                <input class="step-input" type="password" id="apiKeyInput" placeholder="$2a$10$…">
+                <button class="btn btn-gold" onclick="saveKey()">儲存</button>
+              </div>
+              <div class="status-row" id="keyStatus" style="display:none;">
+                <span class="status-dot" id="keyDot"></span>
+                <span class="status-text" id="keyText"></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 2: 建立 Bin -->
+          <div class="card">
+            <div class="card-head">
+              <div class="card-num">2</div>
+              <div class="card-title">建立公告資料庫</div>
+            </div>
+            <div class="card-body">
+              <div class="step-desc">
+                儲存 Master Key 後，點擊「建立 Bin」，系統將自動建立專屬公告資料庫，Bin ID 會自動填入下方。
+              </div>
+              <button class="btn btn-green" onclick="createBin()">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><polyline points="2,7 6,11 12,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                建立 Bin
+              </button>
+              <div class="status-row" id="createStatus" style="display:none;">
+                <span class="status-dot" id="createDot"></span>
+                <span class="status-text" id="createText"></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 3: Bin ID -->
+          <div class="card">
+            <div class="card-head">
+              <div class="card-num">3</div>
+              <div class="card-title">Bin ID</div>
+            </div>
+            <div class="card-body">
+              <div class="step-desc">
+                確認下方 Bin ID 正確後儲存，布告欄管理的每次更新都會自動同步至此資料庫。
+              </div>
+              <div class="input-row">
+                <input class="step-input" type="text" id="binIdInput" placeholder="建立後自動填入，或手動貼上">
+                <button class="btn btn-copy" onclick="copyBinId()">儲存</button>
+              </div>
+              <div class="status-row" id="binIdStatus" style="display:none;">
+                <span class="status-dot" id="binIdDot"></span>
+                <span class="status-text" id="binIdText"></span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- 商品資料庫 收合區塊 -->
+    <div class="collapse-section">
+      <button class="collapse-toggle" id="prodToggle" onclick="toggleProd()">
+        <div class="ct-icon">
+          <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="2" y="2" width="12" height="5" rx="1.5" fill="white" fill-opacity=".9"/>
+            <rect x="2" y="9" width="12" height="5" rx="1.5" fill="white" fill-opacity=".5"/>
+            <circle cx="5" cy="11.5" r="1" fill="#A5B4FC"/>
+          </svg>
+        </div>
+        <span class="ct-label">商品資料庫</span>
+        <span class="ct-status" id="prodCtStatus">未設定</span>
+        <svg class="ct-chevron" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd"/>
+        </svg>
+      </button>
+
+      <div class="collapse-body" id="prodBody">
+        <div class="collapse-inner">
+
+          <!-- Step 1: 建立 Bin -->
+          <div class="card">
+            <div class="card-head">
+              <div class="card-num">1</div>
+              <div class="card-title">建立商品資料庫</div>
+            </div>
+            <div class="card-body">
+              <div class="step-desc">
+                確認已儲存 Master Key 後，點擊「建立 Bin」，系統將自動建立公開的商品資料庫，Bin ID 會自動填入下方。
+              </div>
+              <button class="btn btn-green" onclick="createProductsBin()">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><polyline points="2,7 6,11 12,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                建立 Bin
+              </button>
+              <div class="status-row" id="prodCreateStatus" style="display:none;">
+                <span class="status-dot" id="prodCreateDot"></span>
+                <span class="status-text" id="prodCreateText"></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 2: Bin ID -->
+          <div class="card">
+            <div class="card-head">
+              <div class="card-num">2</div>
+              <div class="card-title">商品 Bin ID</div>
+            </div>
+            <div class="card-body">
+              <div class="step-desc">
+                確認商品 Bin ID 正確後儲存，商品管理的每次同步都會更新至此資料庫，官網前台自動讀取。
+              </div>
+              <div class="input-row">
+                <input class="step-input" type="text" id="prodBinIdInput" placeholder="建立後自動填入，或手動貼上">
+                <button class="btn btn-copy" onclick="saveProductsBinId()">儲存</button>
+              </div>
+              <div class="status-row" id="prodBinIdStatus" style="display:none;">
+                <span class="status-dot" id="prodBinIdDot"></span>
+                <span class="status-text" id="prodBinIdText"></span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Firebase 收合區塊 -->
+    <div class="collapse-section">
+      <button class="collapse-toggle" id="fbToggle" onclick="toggleFb()">
+        <div class="ct-icon" style="background:linear-gradient(135deg,#F57C00,#E53935);">
+          <svg viewBox="0 0 32 32" fill="white" xmlns="http://www.w3.org/2000/svg">
+            <path d="M5.85 24.06L9.4 5.4a.5.5 0 01.96-.06l3.45 7.08 1.6-3.04a.5.5 0 01.9 0L26.15 24.06H5.85z" fill="white" fill-opacity=".7"/>
+            <path d="M16 18.5l-3.5-7L5.85 24.06l10.15-5.56z" fill="white"/>
+            <path d="M26.15 24.06L20.4 11.2a.5.5 0 00-.9 0l-1.6 3.04-3.45-7.08a.5.5 0 00-.96.06L9.4 24.06h16.75z" fill="white" fill-opacity=".5"/>
+          </svg>
+        </div>
+        <span class="ct-label">Firebase</span>
+        <span class="ct-status" id="fbCtStatus">未設定</span>
+        <svg class="ct-chevron" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd"/>
+        </svg>
+      </button>
+
+      <div class="collapse-body" id="fbBody">
+        <div class="collapse-inner">
+
+          <!-- Step 1: 貼上設定碼 -->
+          <div class="card">
+            <div class="card-head">
+              <div class="card-num">1</div>
+              <div class="card-title">貼上 Firebase 設定碼</div>
+            </div>
+            <div class="card-body">
+              <div class="step-desc">
+                前往 <a class="ext-link" href="https://console.firebase.google.com/" target="_blank">
+                  Firebase Console
+                  <svg viewBox="0 0 12 12" fill="none"><path d="M7 1h4v4M11 1L5 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M9 7v3a1 1 0 01-1 1H2a1 1 0 01-1-1V4a1 1 0 011-1h3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                </a> → 建立專案 → 新增網頁應用程式 → 複製整段 <strong>firebaseConfig</strong> 貼入下方。
+              </div>
+              <textarea class="step-input" id="fbConfigRaw" rows="7" style="font-size:12px;line-height:1.6;resize:vertical;" placeholder="const firebaseConfig = {
+  apiKey: &quot;AIzaSy...&quot;,
+  authDomain: &quot;your-app.firebaseapp.com&quot;,
+  projectId: &quot;your-app&quot;,
+  storageBucket: &quot;your-app.appspot.com&quot;,
+  messagingSenderId: &quot;123456789&quot;,
+  appId: &quot;1:123...&quot;
+};"></textarea>
+              <div style="margin-top:10px;">
+                <button class="btn btn-gold" onclick="parseFbConfig()">解析並儲存</button>
+              </div>
+              <div class="status-row" id="fbParseStatus" style="display:none;">
+                <span class="status-dot" id="fbParseDot"></span>
+                <span class="status-text" id="fbParseText"></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 2: 已儲存欄位 -->
+          <div class="card">
+            <div class="card-head">
+              <div class="card-num">2</div>
+              <div class="card-title">已儲存設定</div>
+            </div>
+            <div class="card-body">
+              <div class="step-desc">解析成功後各欄位會自動填入，可單獨修改後儲存。</div>
+              <div class="form-col">
+                <div class="form-row">
+                  <label class="form-lbl">API Key</label>
+                  <div class="input-row">
+                    <input class="step-input" type="text" id="fb_apiKey" placeholder="AIzaSy…">
+                    <button class="btn btn-gold" onclick="saveFbField('apiKey')">儲存</button>
+                  </div>
+                </div>
+                <div class="form-row">
+                  <label class="form-lbl">Auth Domain</label>
+                  <div class="input-row">
+                    <input class="step-input" type="text" id="fb_authDomain" placeholder="your-app.firebaseapp.com">
+                    <button class="btn btn-gold" onclick="saveFbField('authDomain')">儲存</button>
+                  </div>
+                </div>
+                <div class="form-row">
+                  <label class="form-lbl">Project ID</label>
+                  <div class="input-row">
+                    <input class="step-input" type="text" id="fb_projectId" placeholder="your-app">
+                    <button class="btn btn-gold" onclick="saveFbField('projectId')">儲存</button>
+                  </div>
+                </div>
+                <div class="form-row">
+                  <label class="form-lbl">Storage Bucket</label>
+                  <div class="input-row">
+                    <input class="step-input" type="text" id="fb_storageBucket" placeholder="your-app.appspot.com">
+                    <button class="btn btn-gold" onclick="saveFbField('storageBucket')">儲存</button>
+                  </div>
+                </div>
+                <div class="form-row">
+                  <label class="form-lbl">Messaging Sender ID</label>
+                  <div class="input-row">
+                    <input class="step-input" type="text" id="fb_messagingSenderId" placeholder="123456789">
+                    <button class="btn btn-gold" onclick="saveFbField('messagingSenderId')">儲存</button>
+                  </div>
+                </div>
+                <div class="form-row">
+                  <label class="form-lbl">App ID</label>
+                  <div class="input-row">
+                    <input class="step-input" type="text" id="fb_appId" placeholder="1:123…">
+                    <button class="btn btn-gold" onclick="saveFbField('appId')">儲存</button>
+                  </div>
+                </div>
+              </div>
+              <div class="status-row" id="fbFieldStatus" style="display:none;">
+                <span class="status-dot" id="fbFieldDot"></span>
+                <span class="status-text" id="fbFieldText"></span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- LINE 登入 收合區塊 -->
+    <div class="collapse-section">
+      <button class="collapse-toggle" id="lineToggle" onclick="toggleLine()">
+        <div class="ct-icon-line">
+          <svg viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
+            <path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.627-.63h2.386c.349 0 .63.285.63.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.627-.63.349 0 .631.285.631.63v4.771zm-2.466.629H4.917c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.627-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.281.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314"/>
+          </svg>
+        </div>
+        <span class="ct-label">LINE 登入</span>
+        <span class="ct-status" id="lineCtStatus">未設定</span>
+        <svg class="ct-chevron" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd"/>
+        </svg>
+      </button>
+
+      <div class="collapse-body" id="lineBody">
+        <div class="collapse-inner">
+
+          <!-- LIFF ID -->
+          <div class="card">
+            <div class="card-head">
+              <div class="card-num">1</div>
+              <div class="card-title">LIFF ID</div>
+            </div>
+            <div class="card-body">
+              <div class="step-desc">
+                前往 <a class="ext-link" href="https://developers.line.biz/console/" target="_blank">
+                  LINE Developers Console
+                  <svg viewBox="0 0 12 12" fill="none"><path d="M7 1h4v4M11 1L5 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M9 7v3a1 1 0 01-1 1H2a1 1 0 01-1-1V4a1 1 0 011-1h3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                </a>，建立 Provider → 建立 LINE Login Channel → 新增 LIFF App，取得 <strong>LIFF ID</strong>（格式：數字/數字）。
+              </div>
+              <div class="input-row">
+                <input class="step-input" type="text" id="liffIdInput" placeholder="1234567890/AbCdEfGhIj…">
+                <button class="btn btn-gold" onclick="saveLiff()">儲存</button>
+              </div>
+              <div class="status-row" id="liffStatus" style="display:none;">
+                <span class="status-dot" id="liffDot"></span>
+                <span class="status-text" id="liffText"></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Channel ID -->
+          <div class="card">
+            <div class="card-head">
+              <div class="card-num">2</div>
+              <div class="card-title">Channel ID</div>
+            </div>
+            <div class="card-body">
+              <div class="step-desc">
+                在同一個 LINE Login Channel 的 <strong>Basic settings</strong> 頁面可找到 <strong>Channel ID</strong>（純數字）。用於識別您的應用程式身份。
+              </div>
+              <div class="input-row">
+                <input class="step-input" type="text" id="channelIdInput" placeholder="1234567890">
+                <button class="btn btn-gold" onclick="saveChannel()">儲存</button>
+              </div>
+              <div class="status-row" id="channelStatus" style="display:none;">
+                <span class="status-dot" id="channelDot"></span>
+                <span class="status-text" id="channelText"></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Callback URL -->
+          <div class="card">
+            <div class="card-head">
+              <div class="card-num">3</div>
+              <div class="card-title">Callback URL 設定</div>
+            </div>
+            <div class="card-body">
+              <div class="step-desc">
+                在 LINE Developers Console 的 <strong>LINE Login</strong> 頁籤，將以下網址加入 <strong>Callback URL</strong> 允許清單，LINE 登入才能正常運作。
+              </div>
+              <div class="input-row" style="margin-bottom:10px;">
+                <input class="step-input" type="text" id="callbackUrlInput" readonly style="color:var(--muted);font-size:13px;">
+                <button class="btn btn-copy" onclick="copyCallback()">複製</button>
+              </div>
+              <div class="status-row" id="callbackStatus" style="display:none;">
+                <span class="status-dot" id="callbackDot"></span>
+                <span class="status-text" id="callbackText"></span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script>
+// ── Firebase ──
+const firebaseConfig = {
+  apiKey: "AIzaSyDOl7Kq_mZZPdCPkSb_oRPBlxh37sZG5ls",
+  authDomain: "xiangyue-order.firebaseapp.com",
+  projectId: "xiangyue-order",
+  storageBucket: "xiangyue-order.firebasestorage.app",
+  messagingSenderId: "89673554795",
+  appId: "1:89673554795:web:e101e39be2d99349a84a2e"
+};
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+
+// 驗證登入狀態
+auth.onAuthStateChanged(user => {
+  if (!user) {
+    location.href = '後台管理.html';
+  }
+});
+
+function doLogout() {
+  auth.signOut().then(() => location.href = '後台管理.html');
+}
+
+function toggleFb() {
+  var toggle = document.getElementById('fbToggle');
+  var body   = document.getElementById('fbBody');
+  var open   = body.classList.toggle('open');
+  toggle.classList.toggle('open', open);
+}
+
+function parseFbConfig() {
+  var raw = document.getElementById('fbConfigRaw').value;
+  try {
+    var match = raw.match(/\{[\s\S]*\}/);
+    if (!match) throw new Error('找不到 { } 設定物件');
+    var jsonStr = match[0]
+      .replace(/\/\/.*/g, '')
+      .replace(/,\s*}/g, '}')
+      .replace(/([{,]\s*)(\w+)\s*:/g, '$1"$2":');
+    var cfg = JSON.parse(jsonStr);
+    var fields = ['apiKey','authDomain','projectId','storageBucket','messagingSenderId','appId'];
+    var missing = fields.filter(f => !cfg[f]);
+    if (missing.length) throw new Error('缺少欄位：' + missing.join(', '));
+    fields.forEach(function(f) {
+      localStorage.setItem('xy_fb_' + f, cfg[f]);
+      document.getElementById('fb_' + f).value = cfg[f];
+    });
+    showStatus('fbParseStatus','fbParseDot','fbParseText','解析成功，所有欄位已儲存', true);
+    updateFbStatus();
+  } catch(e) {
+    showStatus('fbParseStatus','fbParseDot','fbParseText','解析失敗：' + e.message, false);
+  }
+}
+
+function saveFbField(fieldName) {
+  var val = document.getElementById('fb_' + fieldName).value.trim();
+  if (!val) return;
+  localStorage.setItem('xy_fb_' + fieldName, val);
+  showStatus('fbFieldStatus','fbFieldDot','fbFieldText',fieldName + ' 已儲存', true);
+  updateFbStatus();
+}
+
+function updateFbStatus() {
+  var fields = ['apiKey','authDomain','projectId','storageBucket','messagingSenderId','appId'];
+  var filled = fields.filter(function(f) { return !!localStorage.getItem('xy_fb_' + f); });
+  var el = document.getElementById('fbCtStatus');
+  if (filled.length === fields.length) {
+    el.textContent = '已完成設定'; el.style.color = 'var(--green)';
+  } else if (filled.length > 0) {
+    el.textContent = '部分設定（' + filled.length + '/' + fields.length + '）'; el.style.color = 'var(--gold)';
+  } else {
+    el.textContent = '未設定'; el.style.color = 'var(--muted)';
+  }
+}
+
+function toggleLine() {
+  var toggle = document.getElementById('lineToggle');
+  var body   = document.getElementById('lineBody');
+  var open   = body.classList.toggle('open');
+  toggle.classList.toggle('open', open);
+}
+
+function toggleSection() {
+  var toggle = document.getElementById('apiToggle');
+  var body   = document.getElementById('apiBody');
+  var open   = body.classList.toggle('open');
+  toggle.classList.toggle('open', open);
+}
+
+function togglePw() {
+  var toggle = document.getElementById('pwToggle');
+  var body   = document.getElementById('pwBody');
+  var open   = body.classList.toggle('open');
+  toggle.classList.toggle('open', open);
+}
+
+function changePassword() {
+  var user = auth.currentUser;
+  if (!user) {
+    showStatus('pwStatus','pwDot','pwText','請先登入', false);
+    return;
+  }
+  var current = document.getElementById('pwCurrent').value;
+  var nw      = document.getElementById('pwNew').value;
+  var confirm = document.getElementById('pwConfirm').value;
+
+  if (!current) {
+    showStatus('pwStatus','pwDot','pwText','請輸入目前密碼', false); return;
+  }
+  if (nw.length < 6) {
+    showStatus('pwStatus','pwDot','pwText','新密碼至少需要 6 個字元', false); return;
+  }
+  if (nw !== confirm) {
+    showStatus('pwStatus','pwDot','pwText','兩次輸入的新密碼不一致', false); return;
+  }
+
+  showStatus('pwStatus','pwDot','pwText','驗證中…', null);
+
+  // 使用 Firebase Auth 重新驗證後更改密碼
+  var credential = firebase.auth.EmailAuthProvider.credential(user.email, current);
+  user.reauthenticateWithCredential(credential)
+    .then(() => user.updatePassword(nw))
+    .then(() => {
+      document.getElementById('pwCurrent').value = '';
+      document.getElementById('pwNew').value     = '';
+      document.getElementById('pwConfirm').value = '';
+      showStatus('pwStatus','pwDot','pwText','密碼已成功更新', true);
+      document.getElementById('pwCtStatus').textContent = '密碼已更新';
+      document.getElementById('pwCtStatus').style.color = 'var(--green)';
+    })
+    .catch(err => {
+      var msg = '更新失敗';
+      if (err.code === 'auth/wrong-password' || err.code === 'auth/invalid-credential') msg = '目前密碼不正確';
+      else if (err.code === 'auth/weak-password') msg = '新密碼強度不足';
+      else if (err.code === 'auth/requires-recent-login') msg = '請重新登入後再試';
+      showStatus('pwStatus','pwDot','pwText', msg, false);
+    });
+}
+
+function saveLiff() {
+  var v = document.getElementById('liffIdInput').value.trim();
+  if (!v) return;
+  localStorage.setItem('xy_liffId', v);
+  showStatus('liffStatus','liffDot','liffText','已儲存：' + v, true);
+  updateLineStatus();
+}
+
+function saveChannel() {
+  var v = document.getElementById('channelIdInput').value.trim();
+  if (!v) return;
+  localStorage.setItem('xy_channelId', v);
+  showStatus('channelStatus','channelDot','channelText','已儲存：' + v, true);
+  updateLineStatus();
+}
+
+function copyCallback() {
+  var url = document.getElementById('callbackUrlInput').value;
+  navigator.clipboard.writeText(url).then(() => {
+    showStatus('callbackStatus','callbackDot','callbackText','已複製到剪貼簿', true);
+  });
+}
+
+function updateLineStatus() {
+  var liff    = localStorage.getItem('xy_liffId')    || '';
+  var channel = localStorage.getItem('xy_channelId') || '';
+  var el      = document.getElementById('lineCtStatus');
+  if (liff && channel) { el.textContent = '已完成設定'; el.style.color = 'var(--green)'; }
+  else if (liff || channel) { el.textContent = '部分設定'; el.style.color = 'var(--gold)'; }
+  else { el.textContent = '未設定'; el.style.color = 'var(--muted)'; }
+}
+
+function init() {
+  var key   = localStorage.getItem('xy_masterKey') || '';
+  var binId = localStorage.getItem('xy_binId') || '';
+  if (key) {
+    document.getElementById('apiKeyInput').value = key;
+    showStatus('keyStatus','keyDot','keyText','已儲存（' + key.slice(0,8) + '…）', true);
+  }
+  if (binId) {
+    document.getElementById('binIdInput').value = binId;
+    showStatus('binIdStatus','binIdDot','binIdText','已設定：' + binId, true);
+  }
+  updateHeaderStatus(key, binId);
+
+  if (localStorage.getItem('xy_adminPw')) {
+    document.getElementById('pwCtStatus').textContent = '已設定自訂密碼';
+    document.getElementById('pwCtStatus').style.color = 'var(--green)';
+  }
+
+  // 商品 Bin
+  var prodBinId = localStorage.getItem('xy_productsBinId') || '';
+  if (prodBinId) {
+    document.getElementById('prodBinIdInput').value = prodBinId;
+    showStatus('prodBinIdStatus','prodBinIdDot','prodBinIdText','已設定：' + prodBinId, true);
+  }
+  updateProdStatus();
+
+  // LINE
+  var liffId    = localStorage.getItem('xy_liffId')    || '';
+  var channelId = localStorage.getItem('xy_channelId') || '';
+  if (liffId) {
+    document.getElementById('liffIdInput').value = liffId;
+    showStatus('liffStatus','liffDot','liffText','已儲存：' + liffId, true);
+  }
+  if (channelId) {
+    document.getElementById('channelIdInput').value = channelId;
+    showStatus('channelStatus','channelDot','channelText','已儲存：' + channelId, true);
+  }
+  updateLineStatus();
+
+  // Callback URL = 登入畫面.html 的完整路徑
+  var base = location.href.replace(/[^/]*$/, '');
+  document.getElementById('callbackUrlInput').value = base + '下單系統/index.html';
+
+  // Firebase
+  var fbFields = ['apiKey','authDomain','projectId','storageBucket','messagingSenderId','appId'];
+  fbFields.forEach(function(f) {
+    var v = localStorage.getItem('xy_fb_' + f) || '';
+    if (v) document.getElementById('fb_' + f).value = v;
+  });
+  updateFbStatus();
+}
+
+function updateHeaderStatus(key, binId) {
+  var el = document.getElementById('ctStatus');
+  if (key && binId) { el.textContent = '已完成設定'; el.style.color = 'var(--green)'; }
+  else if (key || binId) { el.textContent = '部分設定'; el.style.color = 'var(--gold)'; }
+  else { el.textContent = '未設定'; el.style.color = 'var(--muted)'; }
+}
+
+function saveKey() {
+  var k = document.getElementById('apiKeyInput').value.trim();
+  if (!k) return;
+  if (/[^\x00-\xFF]/.test(k)) {
+    showStatus('keyStatus','keyDot','keyText','Key 含有非法字元，請重新貼上', false);
+    return;
+  }
+  localStorage.setItem('xy_masterKey', k);
+  showStatus('keyStatus','keyDot','keyText','已儲存（' + k.slice(0,8) + '…）', true);
+  updateHeaderStatus(k, localStorage.getItem('xy_binId'));
+}
+
+function createBin() {
+  var key = localStorage.getItem('xy_masterKey') || document.getElementById('apiKeyInput').value.trim();
+  if (!key) {
+    showStatus('createStatus','createDot','createText','請先儲存 Master Key', false);
+    return;
+  }
+  if (/[^\x00-\xFF]/.test(key)) {
+    showStatus('createStatus','createDot','createText','Master Key 含有非法字元，請重新貼上正確的 Key', false);
+    return;
+  }
+  showStatus('createStatus','createDot','createText','建立中…', null);
+  fetch('https://api.jsonbin.io/v3/b', {
+    method:'POST',
+    headers:{
+      'Content-Type':'application/json',
+      'X-Master-Key':key,
+      'X-Bin-Name':'XiangYue-Bulletin',
+      'X-Bin-Private':'false'
+    },
+    body: JSON.stringify({ announcements: [] })
+  })
+  .then(r => r.json().then(d => ({ ok: r.ok, status: r.status, data: d })))
+  .then(({ ok, status, data }) => {
+    if (!ok) {
+      var msg = data.message || data.error || ('HTTP ' + status);
+      throw new Error(msg);
+    }
+    var id = data.metadata && data.metadata.id;
+    if (!id) throw new Error('回應格式異常，請確認 Master Key 是否正確');
+    localStorage.setItem('xy_binId', id);
+    document.getElementById('binIdInput').value = id;
+    showStatus('createStatus','createDot','createText','建立成功', true);
+    showStatus('binIdStatus','binIdDot','binIdText','已自動填入：' + id, true);
+    updateHeaderStatus(key, id);
+  })
+  .catch(e => showStatus('createStatus','createDot','createText','建立失敗：' + e.message, false));
+}
+
+function copyBinId() {
+  var val = document.getElementById('binIdInput').value.trim();
+  if (!val) { showStatus('binIdStatus','binIdDot','binIdText','請先建立或填入 Bin ID', false); return; }
+  localStorage.setItem('xy_binId', val);
+  showStatus('binIdStatus','binIdDot','binIdText','已儲存：' + val, true);
+  updateHeaderStatus(localStorage.getItem('xy_masterKey'), val);
+}
+
+function toggleProd() {
+  var body = document.getElementById('prodBody');
+  var chevron = document.querySelector('#prodToggle .ct-chevron');
+  var open = body.style.maxHeight && body.style.maxHeight !== '0px';
+  body.style.maxHeight = open ? '0px' : body.scrollHeight + 'px';
+  if (chevron) chevron.style.transform = open ? '' : 'rotate(180deg)';
+}
+
+function createProductsBin() {
+  var key = localStorage.getItem('xy_masterKey') || '';
+  if (!key) {
+    showStatus('prodCreateStatus','prodCreateDot','prodCreateText','請先在上方儲存 Master Key', false);
+    return;
+  }
+  showStatus('prodCreateStatus','prodCreateDot','prodCreateText','建立中…', null);
+  fetch('https://api.jsonbin.io/v3/b', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Master-Key': key,
+      'X-Bin-Name': 'xy_products',
+      'X-Bin-Private': 'false'
+    },
+    body: JSON.stringify({ '腳底按摩椅': [], '指壓床': [], '養生館材料及設備': [] })
+  })
+  .then(function(r){ return r.json().then(function(d){ return { ok: r.ok, status: r.status, data: d }; }); })
+  .then(function(res) {
+    if (!res.ok) throw new Error(res.data.message || 'HTTP ' + res.status);
+    var id = res.data.metadata && res.data.metadata.id;
+    if (!id) throw new Error('回應格式異常，請確認 Master Key 是否正確');
+    localStorage.setItem('xy_productsBinId', id);
+    document.getElementById('prodBinIdInput').value = id;
+    showStatus('prodCreateStatus','prodCreateDot','prodCreateText','建立成功', true);
+    showStatus('prodBinIdStatus','prodBinIdDot','prodBinIdText','已自動填入：' + id, true);
+    updateProdStatus();
+  })
+  .catch(function(e){ showStatus('prodCreateStatus','prodCreateDot','prodCreateText','建立失敗：' + e.message, false); });
+}
+
+function saveProductsBinId() {
+  var val = document.getElementById('prodBinIdInput').value.trim();
+  if (!val) { showStatus('prodBinIdStatus','prodBinIdDot','prodBinIdText','請先建立或填入 Bin ID', false); return; }
+  localStorage.setItem('xy_productsBinId', val);
+  showStatus('prodBinIdStatus','prodBinIdDot','prodBinIdText','已儲存：' + val, true);
+  updateProdStatus();
+}
+
+function updateProdStatus() {
+  var el = document.getElementById('prodCtStatus');
+  var id = localStorage.getItem('xy_productsBinId') || '';
+  if (id) { el.textContent = '已完成設定'; el.style.color = 'var(--green)'; }
+  else    { el.textContent = '未設定';     el.style.color = 'var(--muted)'; }
+}
+
+function showStatus(rowId, dotId, textId, msg, ok) {
+  var row  = document.getElementById(rowId);
+  var dot  = document.getElementById(dotId);
+  var text = document.getElementById(textId);
+  row.style.display = 'flex';
+  if (ok === true)       { dot.className='status-dot ok';  text.className='status-text ok'; }
+  else if (ok === false) { dot.className='status-dot err'; text.className='status-text err'; }
+  else                   { dot.className='status-dot';     text.className='status-text'; }
+  text.textContent = msg;
+}
+
+init();
+</script>
+</body>
+</html>
