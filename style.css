@@ -511,11 +511,11 @@ body {
 }
 .page-hero h1 {
     font-family: 'Noto Serif TC', serif;
-    font-size: 1.1rem;
-    font-weight: 600;
+    font-size: clamp(1.9rem, 3vw, 2.7rem);
+    font-weight: 700;
     color: #1C1810;
-    letter-spacing: 6px;
-    margin-bottom: 16px;
+    letter-spacing: 10px;
+    margin-bottom: 18px;
 }
 .page-hero-divider {
     width: 40px;
@@ -562,8 +562,8 @@ body {
 
 .products-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
-    gap: 28px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 24px;
 }
 .product-card {
     background: #FEFDFB;
@@ -590,7 +590,8 @@ body {
 .product-img img {
     width: 100%;
     height: 100%;
-    object-fit: contain;
+    object-fit: cover;
+    object-position: center;
     display: block;
     position: relative;
     z-index: 1;
@@ -620,9 +621,9 @@ body {
     position: absolute;
     inset: 0;
     background: var(--product-bg) center / cover no-repeat;
-    filter: blur(16px);
-    transform: scale(1.12);
-    opacity: 0.32;
+    filter: blur(10px);
+    transform: scale(1.2);
+    opacity: 0.72;
 }
 .product-info {
     padding: 22px 24px 28px;
@@ -1104,8 +1105,8 @@ body {
 @media (max-width: 900px) {
     .header { padding: 16px 24px; }
     .menu1 > a { padding: 8px 10px; font-size: 0.78rem; }
-    .page-hero h1 { font-size: 1.1rem; letter-spacing: 5px; }
-    .products-grid { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
+    .page-hero h1 { font-size: 1.8rem; letter-spacing: 6px; }
+    .products-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
 }
 
 @media (max-width: 768px) {
@@ -1157,13 +1158,13 @@ body {
     .site-hero { padding: 112px 24px 100px; min-height: 100svh; }
     .hero-watermark { font-size: clamp(180px, 52vw, 300px); right: -6%; }
     .btn-site-outline, .btn-site-gold { padding: 12px 28px; font-size: 0.74rem; }
-    .page-hero h1 { font-size: 1.0rem; letter-spacing: 4px; }
+    .page-hero h1 { font-size: 1.55rem; letter-spacing: 4px; }
     .page-hero-tag { font-size: 1.0rem; letter-spacing: 2px; }
     .page-hero p { font-size: 1.0rem; letter-spacing: 2px; }
 }
 
 @media (max-width: 768px) {
-    .products-grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; }
+    .products-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
     .section-wrap  { padding: 52px 20px; }
 }
 
@@ -1180,7 +1181,7 @@ body {
     .cta-section h2 { font-size: 1.22rem; letter-spacing: 2px; }
     .hero-cta-row { flex-direction: column; align-items: center; }
     .section-title { font-size: 1.45rem; letter-spacing: 3px; }
-    .page-hero h1  { font-size: 1.0rem; }
+    .page-hero h1  { font-size: 1.35rem; letter-spacing: 3px; }
     .page-hero p   { font-size: 0.8rem; letter-spacing: 1.5px; }
 
     .product-card .card-title { font-size: 0.88rem; }
