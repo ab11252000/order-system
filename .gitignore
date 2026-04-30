@@ -29,3 +29,9 @@ out/
 *.exe
 .web/
 .states
+
+# 後台管理本機檔案
+後台管理.html
+後台管理-商品管理.html
+後台管理-出貨管理.html
+後台管理-進階設定.html
