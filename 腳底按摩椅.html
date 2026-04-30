@@ -197,7 +197,7 @@
     var list = (prods && prods.length) ? prods : DEFAULT;
     grid.innerHTML = list.map(function(p){
       return '<div class="product-card">' +
-        '<div class="product-img">' + (p.img ? '<img src="' + p.img + '" alt="' + p.name + '" loading="lazy">' : '') + '</div>' +
+        '<div class="product-img' + (p.img ? ' has-img' : '') + '"' + (p.img ? ' style="--product-bg:url(\'' + p.img + '\')"' : '') + '>' + (p.img ? '<img src="' + p.img + '" alt="' + p.name + '" loading="lazy">' : '') + '</div>' +
         '<div class="product-info">' +
           '<h3>' + p.name + '</h3>' +
           (p.desc ? '<p>' + p.desc + '</p>' : '') +
